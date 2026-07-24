@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thomas Doolittle — Projects</title>
+<meta name="description" content="Projects by Thomas Doolittle — web apps, scrapers, tools, and games.">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>◆</text></svg>">
+
+<meta property="og:title" content="Thomas Doolittle — Projects">
+<meta property="og:description" content="Web apps, scrapers, tools, and games.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tjdoolittle.github.io/">
+
+<script>
+// Applied before first paint so a stored theme never flashes the wrong colors.
+try {
+  var t = localStorage.getItem('theme');
+  if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+} catch (e) {}
+</script>
+</head>
+<body>
+
+<button id="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle color theme">
+  <span aria-hidden="true" data-theme-icon>◐</span>
+</button>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">tjdoolittle</p>
+    <h1>Thomas Doolittle</h1>
+    <p class="lede">
+      I build small, self-contained tools — things that run in a browser with no backend,
+      scrapers that turn public data into something usable, and the occasional game.
+    </p>
+    <nav class="masthead-links" aria-label="Profile links">
+      <a href="https://github.com/tjdoolittle">GitHub</a>
+      <a href="mailto:doolittle.thomas@gmail.com">Email</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2 class="section-heading" id="projects">Projects</h2>
+
+    <ul class="grid" aria-labelledby="projects">
+
+      <!-- Verse & Advocate -->
+      <li class="card">
+        <div class="card-head">
+          <h3 class="card-title">Verse &amp; Advocate</h3>
+          <span class="chip chip-live">Live</span>
+        </div>
+        <p class="card-body">
+          A Bible verse finder for arguments. Describe your point in plain English and it
+          ranks the verses that best support it. Everything runs in the browser — the full
+          text of three translations is bundled and searched locally in a few milliseconds.
+          No backend, no API keys, no tracking.
+        </p>
+        <ul class="tags">
+          <li>JavaScript</li>
+          <li>Offline-first</li>
+          <li>PWA</li>
+          <li>Capacitor / Android</li>
+        </ul>
+        <div class="card-links">
+          <a class="link-primary" href="https://verse-advocate.vercel.app">Open app</a>
+          <a href="https://github.com/tjdoolittle/verse-advocate">Source</a>
+        </div>
+      </li>
+
+      <!-- Home Schematic Designer -->
+      <li class="card">
+        <div class="card-head">
+          <h3 class="card-title">Home Schematic Designer</h3>
+          <span class="chip chip-live">Live</span>
+        </div>
+        <p class="card-body">
+          A canvas for drawing home A/V and network wiring. Devices carry typed ports —
+          HDMI, XLR, RJ45, coax, optical, RCA, TRS, speaker wire, IEC and NEMA power —
+          and cables route orthogonally between them. Import a photo of a device, place
+          its ports, and save it as a reusable part.
+        </p>
+        <ul class="tags">
+          <li>React 19</li>
+          <li>TypeScript</li>
+          <li>React Flow</li>
+          <li>Zustand</li>
+          <li>Vite</li>
+        </ul>
+        <div class="card-links">
+          <a class="link-primary" href="https://home-schematic-designer.vercel.app">Open app</a>
+          <span class="link-muted" title="Repository is private">Source private</span>
+        </div>
+      </li>
+
+      <!-- Savannah Permit Leads -->
+      <li class="card">
+        <div class="card-head">
+          <h3 class="card-title">Savannah Permit Leads</h3>
+          <span class="chip">Tool</span>
+        </div>
+        <p class="card-body">
+          Pulls the City of Savannah's daily building-inspection list and turns it into
+          contractor lead data. It calls the same public JSON API the eTRAC permit portal
+          uses — no browser automation — then enriches each permit with architect, owner,
+          and general-contractor contacts via a headless OAuth PKCE login. Flask UI for
+          browsing, CSV for everything else.
+        </p>
+        <ul class="tags">
+          <li>Python</li>
+          <li>Flask</li>
+          <li>OAuth PKCE</li>
+          <li>Data scraping</li>
+        </ul>
+        <div class="card-links">
+          <span class="link-muted">Not yet published</span>
+        </div>
+      </li>
+
+      <!-- Bottom of the Sea -->
+      <li class="card">
+        <div class="card-head">
+          <h3 class="card-title">Bottom of the Sea</h3>
+          <span class="chip chip-live">Live</span>
+        </div>
+        <p class="card-body">
+          An arcade dive to the Titanic wreck at 3,800 metres. Steer a submarine down
+          through fish, sea cucumbers and starfish on three lives; depth is your score.
+          One HTML file, canvas rendering, no dependencies.
+        </p>
+        <ul class="tags">
+          <li>HTML Canvas</li>
+          <li>Vanilla JS</li>
+          <li>Single file</li>
+        </ul>
+        <div class="card-links">
+          <a class="link-primary" href="https://tjdoolittle.github.io/BottomOfTheSea/">Play</a>
+          <a href="https://github.com/tjdoolittle/BottomOfTheSea">Source</a>
+        </div>
+      </li>
+
+      <!--
+        Hi-Fi Leads — details pending (project lives on another machine).
+        To finish this card: replace the description and tags below, then swap the
+        placeholder link row for real links, e.g.
+          <a class="link-primary" href="URL">Open app</a>
+          <a href="https://github.com/tjdoolittle/REPO">Source</a>
+      -->
+      <li class="card card-pending">
+        <div class="card-head">
+          <h3 class="card-title">Hi-Fi Leads</h3>
+          <span class="chip chip-wip">In progress</span>
+        </div>
+        <p class="card-body">
+          Write-up coming soon.
+        </p>
+        <div class="card-links">
+          <span class="link-muted">Details to come</span>
+        </div>
+      </li>
+
+    </ul>
+  </main>
+
+  <footer>
+    <p>
+      Built as a static site — no framework, no build step.
+      <a href="https://github.com/tjdoolittle/tjdoolittle.github.io">Source of this page</a>.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var toggle = document.getElementById('theme-toggle');
+
+  toggle.addEventListener('click', function () {
+    var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var current = root.getAttribute('data-theme') || (systemDark ? 'dark' : 'light');
+    var next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+})();
+</script>
+
+</body>
+</html>
