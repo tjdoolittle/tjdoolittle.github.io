@@ -21,7 +21,11 @@ Copy an existing card in `index.html` and edit it. The pieces:
   for in-progress, or plain `chip` for anything else.
 - `.tags` — one `<li>` per technology.
 - `.card-links` — `link-primary` for the main call to action, plain `<a>` for
-  secondary links, `link-muted` `<span>` for non-links like "Source private".
+  secondary links, `link-muted` `<span>` for non-link notes. Omit the whole
+  block if a project has nothing to link to.
+
+The site deliberately links only to running apps — no repository or source
+links on any card.
 
 ## Local preview
 
