@@ -279,6 +279,101 @@ a { color: var(--accent); }
 
 .link-muted { color: var(--text-faint); }
 
+/* -------------------------------- résumé ------------------------------- */
+
+/* Second and later section headings need air above them; the first sits
+   directly under the masthead and does not. */
+main > .section-heading:not(:first-of-type) {
+  margin-top: clamp(2.75rem, 6vw, 4.25rem);
+}
+
+.resume-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px 12px 0 0;
+  box-shadow: var(--shadow);
+}
+
+.resume-meta { min-width: 0; }
+
+.resume-label {
+  margin: 0;
+  font-size: .9375rem;
+  font-weight: 550;
+}
+
+.resume-updated {
+  margin: .15rem 0 0;
+  font-family: var(--mono);
+  font-size: .75rem;
+  color: var(--text-faint);
+}
+
+.resume-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  font-family: var(--mono);
+  font-size: .8125rem;
+}
+
+.resume-actions a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+
+.resume-actions a:hover,
+.resume-actions a:focus-visible { border-bottom-color: currentColor; }
+
+/* The viewer is a nice-to-have; the links above it are the real affordance,
+   so it is dropped on small screens where inline PDFs render poorly. */
+.resume-frame {
+  height: min(78vh, 900px);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+
+.resume-frame object {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.resume-fallback,
+.resume-missing {
+  margin: 0;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  font-size: .9375rem;
+  color: var(--text-muted);
+}
+
+.resume-missing {
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+}
+
+.resume-bar[hidden],
+.resume-frame[hidden],
+.resume-updated[hidden],
+.resume-missing[hidden] { display: none; }
+
+@media (max-width: 40rem) {
+  .resume-bar { border-radius: 12px; }
+  .resume-frame { display: none; }
+}
+
 /* -------------------------------- footer ------------------------------- */
 
 footer {

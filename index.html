@@ -38,6 +38,7 @@ try {
       scrapers that turn public data into something usable, and the occasional game.
     </p>
     <nav class="masthead-links" aria-label="Profile links">
+      <a href="#resume">Résumé</a>
       <a href="https://github.com/tjdoolittle">GitHub</a>
       <a href="mailto:doolittle.thomas@gmail.com">Email</a>
     </nav>
@@ -157,6 +158,39 @@ try {
       </li>
 
     </ul>
+
+    <!--
+      Résumé. To update: replace resume.pdf in this folder and push — nothing
+      here needs editing. The "Updated" date and the fallback state below are
+      both derived at runtime from the file itself.
+    -->
+    <h2 class="section-heading" id="resume">Résumé</h2>
+
+    <section class="resume" aria-labelledby="resume">
+      <div class="resume-bar">
+        <div class="resume-meta">
+          <p class="resume-label">Thomas J. Doolittle — PDF</p>
+          <p class="resume-updated" data-resume-updated hidden></p>
+        </div>
+        <div class="resume-actions">
+          <a class="link-primary" href="resume.pdf" target="_blank" rel="noopener">Open in new tab</a>
+          <a href="resume.pdf" download="Thomas-Doolittle-Resume.pdf">Download</a>
+        </div>
+      </div>
+
+      <div class="resume-frame" data-resume-frame>
+        <object data="resume.pdf" type="application/pdf" aria-label="Résumé, PDF">
+          <p class="resume-fallback">
+            Your browser can't display PDFs inline —
+            <a href="resume.pdf" target="_blank" rel="noopener">open it in a new tab</a> instead.
+          </p>
+        </object>
+      </div>
+
+      <p class="resume-missing" data-resume-missing hidden>
+        Résumé available on request — <a href="mailto:doolittle.thomas@gmail.com">get in touch</a>.
+      </p>
+    </section>
   </main>
 
   <footer>
@@ -179,6 +213,34 @@ try {
     root.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch (e) {}
   });
+})();
+
+// Résumé section reads the PDF's own headers, so swapping the file is the
+// only step needed to update it: the date relabels itself, and if the file
+// is ever absent the section falls back to a "available on request" note.
+(function () {
+  var section = document.querySelector('.resume');
+  if (!section || !window.fetch) return;
+
+  fetch('resume.pdf', { method: 'HEAD' })
+    .then(function (res) {
+      if (!res.ok) throw new Error('missing');
+
+      var modified = res.headers.get('last-modified');
+      if (!modified) return;
+      var date = new Date(modified);
+      if (isNaN(date)) return;
+
+      var label = section.querySelector('[data-resume-updated]');
+      label.textContent = 'Updated ' +
+        date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      label.hidden = false;
+    })
+    .catch(function () {
+      section.querySelector('.resume-bar').hidden = true;
+      section.querySelector('[data-resume-frame]').hidden = true;
+      section.querySelector('[data-resume-missing]').hidden = false;
+    });
 })();
 </script>
 

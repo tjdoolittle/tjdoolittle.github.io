@@ -11,7 +11,25 @@ Static HTML and CSS — no framework, no build step, no external requests. Edit
 | --- | --- |
 | `index.html` | Page content. Each project is one `<li class="card">`. |
 | `styles.css` | All styling. Light/dark themes are CSS variables at the top. |
+| `resume.pdf` | The résumé the site serves. Replace this file to update it. |
 | `.nojekyll` | Tells Pages to serve the files as-is, no Jekyll processing. |
+
+## Updating the résumé
+
+Overwrite `resume.pdf` with the new version and push. Nothing in `index.html`
+needs editing — keep the filename as `resume.pdf`:
+
+```bash
+cp /path/to/new-resume.pdf resume.pdf
+git commit -am "Update resume" && git push
+```
+
+The "Updated <month> <year>" label reads the file's `Last-Modified` header at
+page load, so it relabels itself. If `resume.pdf` is ever missing, the section
+degrades to "Résumé available on request" rather than showing a broken viewer.
+
+Pages caches assets for about ten minutes, so a swapped PDF can take that long
+to reach someone who already visited. A hard refresh gets it immediately.
 
 ## Adding a project
 
