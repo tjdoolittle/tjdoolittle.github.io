@@ -42,6 +42,11 @@ try {
 
     <!-- Loaded state: filled in by the script from GoatCounter's public counter. -->
     <section class="stats" data-stats-loaded hidden aria-label="Visit totals">
+      <div class="stats-head">
+        <button type="button" class="stats-refresh" data-stats-refresh>
+          <span data-refresh-label>Refresh</span>
+        </button>
+      </div>
       <ul class="stat-grid">
         <li class="stat">
           <p class="stat-value" data-stat-views>—</p>
@@ -138,38 +143,70 @@ try {
     return;
   }
 
-  // no-store keeps the browser from adding its own cache layer on top of
-  // GoatCounter's; the endpoint itself is still CDN-cached server-side, so the
-  // figure refreshes on their schedule, not instantly.
-  fetch(base + '/counter/TOTAL.json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
-    .then(function (res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
+  var refreshBtn   = document.querySelector('[data-stats-refresh]');
+  var refreshLabel = document.querySelector('[data-refresh-label]');
+
+  // load(isRefresh): fetch the totals and render. On first call it swaps the
+  // loading/error states; on a manual refresh the tiles stay put and only the
+  // button reflects progress, so a hiccup never blanks numbers already shown.
+  function load(isRefresh) {
+    if (isRefresh) {
+      refreshBtn.disabled = true;
+      refreshLabel.textContent = 'Refreshing…';
+    }
+
+    // no-store keeps the browser from adding its own cache layer on top of
+    // GoatCounter's. The endpoint is still CDN-cached server-side, so a refresh
+    // only shows a new number once GoatCounter's own cache has rolled over.
+    return fetch(base + '/counter/TOTAL.json', {
+      headers: { 'Accept': 'application/json' }, cache: 'no-store'
     })
-    .then(function (data) {
-      var views = fmt(data.count);
-      var uniq  = fmt(data.count_unique);
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var views = fmt(data.count);
+        var uniq  = fmt(data.count_unique);
 
-      document.querySelector('[data-stat-views]').textContent = views != null ? views : '—';
+        document.querySelector('[data-stat-views]').textContent = views != null ? views : '—';
 
-      if (uniq != null) {
-        document.querySelector('[data-stat-visitors]').textContent = uniq;
-      } else {
-        hide(document.querySelector('[data-stat-visitors-tile]'));
-      }
+        if (uniq != null) {
+          document.querySelector('[data-stat-visitors]').textContent = uniq;
+          show(document.querySelector('[data-stat-visitors-tile]'));
+        } else {
+          hide(document.querySelector('[data-stat-visitors-tile]'));
+        }
 
-      document.querySelector('[data-stats-dashboard]').setAttribute('href', base);
+        document.querySelector('[data-stats-dashboard]').setAttribute('href', base);
 
-      hide(loading);
-      show(loaded);
-    })
-    .catch(function () {
-      hide(loading);
-      document.querySelector('[data-stats-error-detail]').textContent =
-        'If analytics were just set up, enable "Allow using the visitor counter" ' +
-        'in GoatCounter’s settings. The full dashboard is at ' + base + '.';
-      show(errorBox);
-    });
+        hide(loading);
+        show(loaded);
+
+        if (isRefresh) {
+          refreshBtn.disabled = false;
+          refreshLabel.textContent = 'Refreshed';
+          setTimeout(function () { refreshLabel.textContent = 'Refresh'; }, 1500);
+        }
+      })
+      .catch(function () {
+        if (isRefresh) {
+          // Keep the numbers we already have; just report the failed refresh.
+          refreshBtn.disabled = false;
+          refreshLabel.textContent = 'Try again';
+          setTimeout(function () { refreshLabel.textContent = 'Refresh'; }, 2000);
+          return;
+        }
+        hide(loading);
+        document.querySelector('[data-stats-error-detail]').textContent =
+          'If analytics were just set up, enable "Allow using the visitor counter" ' +
+          'in GoatCounter’s settings. The full dashboard is at ' + base + '.';
+        show(errorBox);
+      });
+  }
+
+  refreshBtn.addEventListener('click', function () { load(true); });
+  load(false);
 })();
 </script>
 
