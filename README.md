@@ -16,13 +16,25 @@ Static HTML and CSS — no framework, no build step, no external requests. Edit
 
 ## Updating the résumé
 
-Overwrite `resume.pdf` with the new version and push. Nothing in `index.html`
-needs editing — keep the filename as `resume.pdf`:
+The published `resume.pdf` deliberately omits the direct phone number and home
+ZIP — the file is public and gets scraped. A fresh export from Word puts them
+back, so run it through `tools/trim-resume.py`, which writes `resume.pdf`:
 
 ```bash
-cp /path/to/new-resume.pdf resume.pdf
+uv run --no-project --with pypdf tools/trim-resume.py /path/to/new-export.pdf
 git commit -am "Update resume" && git push
 ```
+
+The script trims the header to `Atlanta, GA | email | LinkedIn`, re-centers the
+line, and clears the document metadata (Word leaves the original author's name
+in it). It validates the PDF's layout first and refuses to write if anything
+looks off, so a bad export fails loudly rather than producing a mangled file —
+see the header comment in [tools/trim-resume.py](tools/trim-resume.py) if a
+future template change trips it.
+
+Nothing in `index.html` needs editing — keep the filename as `resume.pdf`. If
+you ever want to publish the full version verbatim, `cp` it to `resume.pdf`
+instead and skip the script.
 
 The "Updated <month> <year>" label reads the file's `Last-Modified` header at
 page load, so it relabels itself. If `resume.pdf` is ever missing, the section
