@@ -53,8 +53,10 @@ try {
         </li>
       </ul>
       <p class="stats-note">
-        Totals since the counter went live, updated on each visit.
-        <a data-stats-dashboard href="#" target="_blank" rel="noopener">Detailed breakdown →</a>
+        Totals since the counter went live. GoatCounter caches this public
+        figure, so it refreshes periodically rather than instantly — the
+        <a data-stats-dashboard href="#" target="_blank" rel="noopener">dashboard</a>
+        has the live count and full breakdown.
       </p>
     </section>
 
@@ -136,7 +138,10 @@ try {
     return;
   }
 
-  fetch(base + '/counter/TOTAL.json', { headers: { 'Accept': 'application/json' } })
+  // no-store keeps the browser from adding its own cache layer on top of
+  // GoatCounter's; the endpoint itself is still CDN-cached server-side, so the
+  // figure refreshes on their schedule, not instantly.
+  fetch(base + '/counter/TOTAL.json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
     .then(function (res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.json();
