@@ -2,17 +2,41 @@
 
 Project showcase, served by GitHub Pages at <https://tjdoolittle.github.io>.
 
-Static HTML and CSS — no framework, no build step, no external requests. Edit
-`index.html` and push; Pages redeploys on its own.
+Static HTML and CSS — no framework, no build step. Edit `index.html` and push;
+Pages redeploys on its own. The only external request is the optional analytics
+tracker (see below), and it stays off until you add a code.
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
 | `index.html` | Page content. Each project is one `<li class="card">`. |
+| `stats.html` | Public visit-stats page (`Stats` in the nav). |
 | `styles.css` | All styling. Light/dark themes are CSS variables at the top. |
+| `site.js` | Shared theme toggle + analytics loader. Holds the GoatCounter code. |
 | `resume.pdf` | The résumé the site serves. Replace this file to update it. |
 | `.nojekyll` | Tells Pages to serve the files as-is, no Jekyll processing. |
+
+## Visit stats
+
+Traffic is counted with [GoatCounter](https://www.goatcounter.com) — no cookies,
+no personal data, no consent banner needed. It ships **off**; the tracker never
+loads and the Stats page shows an "not connected yet" note until you switch it
+on:
+
+1. Sign up at <https://www.goatcounter.com> and pick a code (your subdomain,
+   e.g. `tjdoolittle` → `tjdoolittle.goatcounter.com`).
+2. In `site.js`, set `window.GOATCOUNTER_CODE` to that code (one line, near the
+   top). That single value powers the tracker on every page and the Stats page.
+3. In GoatCounter → Settings, tick **"Allow using the visitor counter"** so the
+   public Stats page can read the totals. To make the full referrer/country
+   dashboard public too (the "Detailed breakdown" link), also tick **"Make
+   statistics public"**.
+4. Commit and push.
+
+The Stats page pulls site-wide totals live from GoatCounter's public counter and
+degrades to a clear message if they can't load. `stats.html` is marked
+`noindex`, so search engines skip it even though anyone with the link can view.
 
 ## Updating the résumé
 

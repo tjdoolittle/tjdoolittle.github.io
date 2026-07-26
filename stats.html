@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stats — Thomas Doolittle</title>
+<meta name="description" content="Visit stats for tjdoolittle.github.io.">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>◆</text></svg>">
+
+<script>
+// Applied before first paint so a stored theme never flashes the wrong colors.
+try {
+  var t = localStorage.getItem('theme');
+  if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+} catch (e) {}
+</script>
+</head>
+<body>
+
+<button id="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle color theme">
+  <span aria-hidden="true" data-theme-icon>◐</span>
+</button>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">tjdoolittle</p>
+    <h1>Stats</h1>
+    <p class="lede">
+      Traffic to this site. Counted with GoatCounter — no cookies, no personal
+      data, nothing that follows you around.
+    </p>
+    <nav class="masthead-links" aria-label="Page links">
+      <a href="index.html">← Projects</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Loaded state: filled in by the script from GoatCounter's public counter. -->
+    <section class="stats" data-stats-loaded hidden aria-label="Visit totals">
+      <ul class="stat-grid">
+        <li class="stat">
+          <p class="stat-value" data-stat-views>—</p>
+          <p class="stat-label">Pageviews</p>
+        </li>
+        <li class="stat" data-stat-visitors-tile>
+          <p class="stat-value" data-stat-visitors>—</p>
+          <p class="stat-label">Unique visitors</p>
+        </li>
+      </ul>
+      <p class="stats-note">
+        Totals since the counter went live, updated on each visit.
+        <a data-stats-dashboard href="#" target="_blank" rel="noopener">Detailed breakdown →</a>
+      </p>
+    </section>
+
+    <!-- Loading state. -->
+    <p class="stats-status" data-stats-loading>Loading totals…</p>
+
+    <!-- Not-configured state (before a GoatCounter code is set). -->
+    <div class="stats-status stats-message" data-stats-unconfigured hidden>
+      <p>Analytics aren't connected yet.</p>
+      <p class="stats-sub">
+        Once a GoatCounter code is added in <code>site.js</code>, live visit
+        totals appear here.
+      </p>
+    </div>
+
+    <!-- Error state (counter unreachable, e.g. visitor counter not enabled). -->
+    <div class="stats-status stats-message" data-stats-error hidden>
+      <p>Live totals couldn't load right now.</p>
+      <p class="stats-sub" data-stats-error-detail></p>
+    </div>
+
+    <h2 class="section-heading" id="about">What's counted</h2>
+    <section aria-labelledby="about" class="stats-about">
+      <p>
+        Each page view is recorded — the path visited, the referring site, and
+        coarse details like browser and country. No IP addresses are stored, no
+        cookies are set, and nothing identifies you personally. The headline
+        totals above are public; the referrer and country breakdowns live on the
+        GoatCounter dashboard.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Built as a static site — no framework, no build step.</p>
+  </footer>
+
+</div>
+
+<script src="site.js"></script>
+
+<script>
+// Pull site-wide totals from GoatCounter's public visitor-counter endpoint and
+// render them, degrading to a clear message in every failure case rather than
+// leaving a spinner or a broken number on the page.
+(function () {
+  var code = window.GOATCOUNTER_CODE;
+
+  var loaded       = document.querySelector('[data-stats-loaded]');
+  var loading      = document.querySelector('[data-stats-loading]');
+  var unconfigured = document.querySelector('[data-stats-unconfigured]');
+  var errorBox     = document.querySelector('[data-stats-error]');
+
+  function show(el) { if (el) el.hidden = false; }
+  function hide(el) { if (el) el.hidden = true; }
+
+  // Counts arrive pre-formatted as strings ("1,234"); fall back to formatting
+  // a raw number ourselves if that ever changes.
+  function fmt(v) {
+    if (v == null) return null;
+    if (typeof v === 'number') return v.toLocaleString();
+    return String(v).trim();
+  }
+
+  if (!code || code === 'YOUR_CODE_HERE') {
+    hide(loading);
+    show(unconfigured);
+    return;
+  }
+
+  var base = 'https://' + code + '.goatcounter.com';
+
+  if (!window.fetch) {
+    hide(loading);
+    document.querySelector('[data-stats-error-detail]').textContent =
+      'This browser is too old to load them here — open the dashboard directly at ' + base + '.';
+    show(errorBox);
+    return;
+  }
+
+  fetch(base + '/counter/TOTAL.json', { headers: { 'Accept': 'application/json' } })
+    .then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      var views = fmt(data.count);
+      var uniq  = fmt(data.count_unique);
+
+      document.querySelector('[data-stat-views]').textContent = views != null ? views : '—';
+
+      if (uniq != null) {
+        document.querySelector('[data-stat-visitors]').textContent = uniq;
+      } else {
+        hide(document.querySelector('[data-stat-visitors-tile]'));
+      }
+
+      document.querySelector('[data-stats-dashboard]').setAttribute('href', base);
+
+      hide(loading);
+      show(loaded);
+    })
+    .catch(function () {
+      hide(loading);
+      document.querySelector('[data-stats-error-detail]').textContent =
+        'If analytics were just set up, enable "Allow using the visitor counter" ' +
+        'in GoatCounter’s settings. The full dashboard is at ' + base + '.';
+      show(errorBox);
+    });
+})();
+</script>
+
+</body>
+</html>

@@ -39,6 +39,7 @@ try {
     </p>
     <nav class="masthead-links" aria-label="Profile links">
       <a href="#resume">Résumé</a>
+      <a href="stats.html">Stats</a>
       <a href="https://github.com/tjdoolittle">GitHub</a>
       <a href="mailto:doolittle.thomas@gmail.com">Email</a>
     </nav>
@@ -201,20 +202,9 @@ try {
 
 </div>
 
+<script src="site.js"></script>
+
 <script>
-(function () {
-  var root = document.documentElement;
-  var toggle = document.getElementById('theme-toggle');
-
-  toggle.addEventListener('click', function () {
-    var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var current = root.getAttribute('data-theme') || (systemDark ? 'dark' : 'light');
-    var next = current === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('theme', next); } catch (e) {}
-  });
-})();
-
 // Résumé section reads the PDF's own headers, so swapping the file is the
 // only step needed to update it: the date relabels itself, and if the file
 // is ever absent the section falls back to a "available on request" note.

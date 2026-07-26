@@ -374,6 +374,108 @@ main > .section-heading:not(:first-of-type) {
   .resume-frame { display: none; }
 }
 
+/* --------------------------------- stats ------------------------------- */
+
+.stat-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1.1rem;
+}
+
+.stat {
+  padding: 1.5rem 1.5rem 1.35rem;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.stat-value {
+  margin: 0;
+  font-size: clamp(2.25rem, 6vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  margin: .5rem 0 0;
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.stats-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 1.2rem 0 0;
+  font-size: .875rem;
+  color: var(--text-muted);
+}
+
+.stats-note a {
+  font-family: var(--mono);
+  font-size: .8125rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+
+.stats-note a:hover,
+.stats-note a:focus-visible { border-bottom-color: currentColor; }
+
+.stats-status {
+  margin: 0;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .9375rem;
+}
+
+.stats-message {
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+}
+
+.stats-message p { margin: 0; }
+
+.stats-sub {
+  margin-top: .5rem !important;
+  font-size: .875rem;
+  color: var(--text-faint);
+}
+
+.stats-sub code {
+  font-family: var(--mono);
+  font-size: .8125em;
+  padding: .05em .35em;
+  background: var(--bg-sunken);
+  border-radius: 4px;
+}
+
+.stats-about {
+  max-width: 46rem;
+  color: var(--text-muted);
+  font-size: .9375rem;
+}
+
+.stats-about p { margin: 0; text-wrap: pretty; }
+
+[data-stats-loaded][hidden],
+[data-stats-loading][hidden],
+[data-stats-unconfigured][hidden],
+[data-stats-error][hidden],
+[data-stat-visitors-tile][hidden] { display: none; }
+
 /* -------------------------------- footer ------------------------------- */
 
 footer {
