@@ -16,7 +16,7 @@
 
    That's the only edit needed; index.html, stats.html and the Stats page all
    read this one value. */
-window.GOATCOUNTER_CODE = 'YOUR_CODE_HERE';
+window.GOATCOUNTER_CODE = 'thomasdoolittle';
 
 (function () {
   var code = window.GOATCOUNTER_CODE;
