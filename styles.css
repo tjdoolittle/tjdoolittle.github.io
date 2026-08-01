@@ -279,7 +279,7 @@ a { color: var(--accent); }
 
 .link-muted { color: var(--text-faint); }
 
-/* ------------------------ card visual (SVG) ---------------------------- */
+/* -------------------------- card visual -------------------------------- */
 
 .card-visual {
   margin: 0 0 1.15rem;
@@ -289,37 +289,21 @@ a { color: var(--accent); }
   background: var(--bg-sunken);
 }
 
-.yt-illustration { display: block; width: 100%; height: auto; }
-
-.yt-screen { fill: var(--bg-card); stroke: var(--rule); stroke-width: 1.5; }
-.yt-video  { fill: var(--rule-strong); opacity: .55; }
-
-.yt-ad-bg  { fill: var(--wip-soft); }
-.yt-ad-tx  { fill: var(--wip); font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .05em; }
-
-.yt-skip-bg { fill: var(--bg-card); stroke: var(--rule-strong); stroke-width: 1.5; }
-.yt-skip-tx { fill: var(--text); font-family: var(--mono); font-size: 13px; font-weight: 500; }
-.yt-skip-ic { fill: var(--text-muted); }
-
-.yt-stand, .yt-base { fill: var(--rule-strong); }
-
-.yt-tap-ring { fill: none; stroke: var(--accent); stroke-width: 2; }
-.yt-tap-dot  { fill: var(--accent); }
-
-/* Auto-tap ripple: fades in and expands over the Skip button on a loop. */
-.yt-tap {
-  transform-origin: 246px 111px;
-  animation: yt-tap 2.6s ease-out infinite;
+.card-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-@keyframes yt-tap {
-  0%        { opacity: 0; transform: scale(.55); }
-  12%       { opacity: 1; transform: scale(1); }
-  45%, 100% { opacity: 0; transform: scale(1.35); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .yt-tap { animation: none; opacity: 1; transform: none; }
+.visual-caption {
+  margin: 0;
+  padding: .55rem .8rem;
+  border-top: 1px solid var(--rule);
+  background: var(--bg-card);
+  font-family: var(--mono);
+  font-size: .7rem;
+  line-height: 1.5;
+  color: var(--text-faint);
 }
 
 /* ---------------------------- feature card ----------------------------- */
