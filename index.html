@@ -142,6 +142,26 @@ try {
 
       <!-- YouTube TV Auto-Skip -->
       <li class="card">
+        <!-- No web demo (it's an Android TV app), so this SVG stands in for a
+             screenshot: a TV with a "Skip Ad" button and an auto-tap ripple. -->
+        <div class="card-visual">
+          <svg viewBox="0 0 320 168" class="yt-illustration" role="img"
+               aria-label="A TV screen playing an ad, with the Skip Ad button being auto-tapped">
+            <rect class="yt-screen" x="8" y="8" width="304" height="126" rx="10"/>
+            <path class="yt-video" d="M150 55 l26 16 -26 16 z"/>
+            <rect class="yt-ad-bg" x="24" y="22" width="40" height="20" rx="4"/>
+            <text class="yt-ad-tx" x="44" y="36" text-anchor="middle">AD</text>
+            <rect class="yt-skip-bg" x="198" y="98" width="96" height="26" rx="13"/>
+            <text class="yt-skip-tx" x="234" y="115" text-anchor="middle">Skip Ad</text>
+            <path class="yt-skip-ic" d="M270 105 l7 6 -7 6 z M278 105 l7 6 -7 6 z"/>
+            <g class="yt-tap">
+              <circle class="yt-tap-ring" cx="246" cy="111" r="15"/>
+              <circle class="yt-tap-dot" cx="246" cy="111" r="3"/>
+            </g>
+            <rect class="yt-stand" x="150" y="134" width="20" height="16"/>
+            <rect class="yt-base" x="126" y="150" width="68" height="6" rx="3"/>
+          </svg>
+        </div>
         <div class="card-head">
           <h3 class="card-title">YouTube TV Auto-Skip</h3>
           <span class="chip">Android TV</span>
@@ -161,11 +181,11 @@ try {
       </li>
 
       <!--
-        Hi-Fi Leads — full-width feature card with a live embedded demo.
-        The demo is on Render's free tier, so the first load can cold-start
-        (~30s); the overlay in .preview-frame covers that and hides on load.
-        To point the preview elsewhere, change both the iframe src and the
-        "Open app" href to the new URL.
+        Hi-Fi Leads — full-width feature card with a click-to-load live demo.
+        The demo is on Render's free tier, so it only wakes when a visitor clicks
+        the poster (avoids a ~30s cold-start on every homepage visit). The script
+        injects the iframe on click; the URL lives once, in data-demo-url below.
+        To point the preview elsewhere, change data-demo-url and the "Open app" href.
       -->
       <li class="card card-feature">
         <div class="feature-body">
@@ -195,15 +215,15 @@ try {
         </div>
 
         <div class="feature-preview">
-          <div class="preview-frame">
-            <p class="preview-loading" data-preview-loading>
+          <div class="preview-frame" data-preview-frame data-demo-url="https://hifi-leads-zm1f.onrender.com">
+            <button type="button" class="preview-poster" data-preview-poster>
+              <span class="preview-play" aria-hidden="true">▶</span>
+              <span class="preview-poster-title">Load live demo</span>
+              <span class="preview-poster-note">Runs the real app · free tier, first load ~30s</span>
+            </button>
+            <p class="preview-loading" data-preview-loading hidden>
               Waking the live demo… first load can take ~30&nbsp;s on the free tier.
             </p>
-            <iframe class="preview-iframe" data-preview-iframe
-                    title="Hi-Fi Leads — live demo"
-                    src="https://hifi-leads-zm1f.onrender.com"
-                    loading="lazy"
-                    sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
           </div>
         </div>
       </li>
@@ -283,20 +303,37 @@ try {
     });
 })();
 
-// Live-demo preview: drop the "waking…" overlay once the embedded app loads,
-// and after a longer wait nudge toward opening it directly if it's still cold.
+// Live-demo preview: click-to-load, so the free-tier app only wakes on demand.
+// Clicking the poster injects the iframe; the "waking…" overlay covers the
+// cold start and hides on load, and after a longer wait offers a direct link.
 (function () {
-  var frame = document.querySelector('[data-preview-iframe]');
-  var note  = document.querySelector('[data-preview-loading]');
-  if (!frame || !note) return;
+  var frame = document.querySelector('[data-preview-frame]');
+  if (!frame) return;
+  var poster = frame.querySelector('[data-preview-poster]');
+  var note   = frame.querySelector('[data-preview-loading]');
+  var url    = frame.getAttribute('data-demo-url');
+  if (!poster || !note || !url) return;
 
-  var loaded = false;
-  frame.addEventListener('load', function () { loaded = true; note.hidden = true; });
-  setTimeout(function () {
-    if (!loaded) note.innerHTML =
-      'Still waking the free-tier demo — you can ' +
-      '<a href="https://hifi-leads-zm1f.onrender.com" target="_blank" rel="noopener">open it in a new tab</a>.';
-  }, 20000);
+  poster.addEventListener('click', function () {
+    poster.hidden = true;
+    note.hidden = false;
+
+    var iframe = document.createElement('iframe');
+    iframe.className = 'preview-iframe';
+    iframe.title = 'Hi-Fi Leads — live demo';
+    iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin allow-popups');
+
+    var loaded = false;
+    iframe.addEventListener('load', function () { loaded = true; note.hidden = true; });
+    frame.appendChild(iframe);
+    iframe.src = url;
+
+    setTimeout(function () {
+      if (!loaded) note.innerHTML =
+        'Still waking the free-tier demo — you can ' +
+        '<a href="' + url + '" target="_blank" rel="noopener">open it in a new tab</a>.';
+    }, 20000);
+  });
 })();
 </script>
 

@@ -279,6 +279,49 @@ a { color: var(--accent); }
 
 .link-muted { color: var(--text-faint); }
 
+/* ------------------------ card visual (SVG) ---------------------------- */
+
+.card-visual {
+  margin: 0 0 1.15rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+
+.yt-illustration { display: block; width: 100%; height: auto; }
+
+.yt-screen { fill: var(--bg-card); stroke: var(--rule); stroke-width: 1.5; }
+.yt-video  { fill: var(--rule-strong); opacity: .55; }
+
+.yt-ad-bg  { fill: var(--wip-soft); }
+.yt-ad-tx  { fill: var(--wip); font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .05em; }
+
+.yt-skip-bg { fill: var(--bg-card); stroke: var(--rule-strong); stroke-width: 1.5; }
+.yt-skip-tx { fill: var(--text); font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.yt-skip-ic { fill: var(--text-muted); }
+
+.yt-stand, .yt-base { fill: var(--rule-strong); }
+
+.yt-tap-ring { fill: none; stroke: var(--accent); stroke-width: 2; }
+.yt-tap-dot  { fill: var(--accent); }
+
+/* Auto-tap ripple: fades in and expands over the Skip button on a loop. */
+.yt-tap {
+  transform-origin: 246px 111px;
+  animation: yt-tap 2.6s ease-out infinite;
+}
+
+@keyframes yt-tap {
+  0%        { opacity: 0; transform: scale(.55); }
+  12%       { opacity: 1; transform: scale(1); }
+  45%, 100% { opacity: 0; transform: scale(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yt-tap { animation: none; opacity: 1; transform: none; }
+}
+
 /* ---------------------------- feature card ----------------------------- */
 
 .card-feature {
@@ -332,6 +375,66 @@ a { color: var(--accent); }
 }
 
 .preview-loading[hidden] { display: none; }
+
+/* Click-to-load poster: a full-frame button that injects the demo iframe. */
+.preview-poster {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  width: 100%;
+  padding: 1.5rem;
+  background: var(--bg-sunken);
+  border: 0;
+  color: var(--text-muted);
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: color .15s ease;
+}
+
+.preview-poster:hover,
+.preview-poster:focus-visible { color: var(--accent); }
+
+.preview-play {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  padding-left: .18em; /* optically center the ▶ glyph */
+  transition: transform .15s ease;
+}
+
+.preview-poster:hover .preview-play,
+.preview-poster:focus-visible .preview-play { transform: scale(1.06); }
+
+.preview-poster-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.preview-poster:hover .preview-poster-title,
+.preview-poster:focus-visible .preview-poster-title { color: var(--accent); }
+
+.preview-poster-note {
+  font-family: var(--mono);
+  font-size: .75rem;
+  color: var(--text-faint);
+}
+
+.preview-poster[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .preview-poster:hover .preview-play,
+  .preview-poster:focus-visible .preview-play { transform: none; }
+}
 
 @media (max-width: 52rem) {
   .card-feature { grid-template-columns: 1fr; }
