@@ -140,29 +140,71 @@ try {
         </div>
       </li>
 
-      <!-- Hi-Fi Leads -->
+      <!-- YouTube TV Auto-Skip -->
       <li class="card">
         <div class="card-head">
-          <h3 class="card-title">Hi-Fi Leads</h3>
-          <span class="chip chip-live">Live</span>
+          <h3 class="card-title">YouTube TV Auto-Skip</h3>
+          <span class="chip">Android TV</span>
         </div>
         <p class="card-body">
-          Scores audiophile sales leads by buying intent. Feed it a CSV of Facebook
-          lead-form exports, paste posts you're browsing, or pull straight from
-          Reddit's public API, and it ranks each person by how likely they are to
-          buy high-end gear — Wilson Audio, Sonus Faber, McIntosh, Audio Research,
-          Sonos, Control4 — using an editable brand checklist. Transparent regex
-          scoring with a Hot/Warm/Cold verdict and a scored-CSV export. No model,
-          no tracking.
+          An Android TV / Google TV app that runs a background accessibility
+          service and auto-presses "Skip Ad" and the autoplay "Next" button the
+          instant they appear in the YouTube app. Reads on-screen content from
+          YouTube only and sends nothing anywhere — a personal sideload utility,
+          like an ad-blocker.
         </p>
         <ul class="tags">
-          <li>Python</li>
-          <li>Flask</li>
-          <li>Reddit API</li>
-          <li>Lead scoring</li>
+          <li>Kotlin</li>
+          <li>Android TV</li>
+          <li>Accessibility Service</li>
         </ul>
-        <div class="card-links">
-          <a class="link-primary" href="https://hifi-leads-zm1f.onrender.com">Open app</a>
+      </li>
+
+      <!--
+        Hi-Fi Leads — full-width feature card with a live embedded demo.
+        The demo is on Render's free tier, so the first load can cold-start
+        (~30s); the overlay in .preview-frame covers that and hides on load.
+        To point the preview elsewhere, change both the iframe src and the
+        "Open app" href to the new URL.
+      -->
+      <li class="card card-feature">
+        <div class="feature-body">
+          <div class="card-head">
+            <h3 class="card-title">Hi-Fi Leads</h3>
+            <span class="chip chip-live">Live</span>
+          </div>
+          <p class="card-body">
+            Scores audiophile sales leads by buying intent. Feed it a CSV of
+            Facebook lead-form exports, paste posts you're browsing, or pull
+            straight from Reddit's public API, and it ranks each person by how
+            likely they are to buy high-end gear — Wilson Audio, Sonus Faber,
+            McIntosh, Audio Research, Sonos, Control4 — using an editable brand
+            checklist. Transparent regex scoring with a Hot/Warm/Cold verdict
+            and a scored-CSV export.
+          </p>
+          <ul class="tags">
+            <li>Python</li>
+            <li>Flask</li>
+            <li>Reddit API</li>
+            <li>Lead scoring</li>
+          </ul>
+          <div class="card-links">
+            <a class="link-primary" href="https://hifi-leads-zm1f.onrender.com" target="_blank" rel="noopener">Open app</a>
+            <span class="link-muted">Live demo · free tier, first load ~30s</span>
+          </div>
+        </div>
+
+        <div class="feature-preview">
+          <div class="preview-frame">
+            <p class="preview-loading" data-preview-loading>
+              Waking the live demo… first load can take ~30&nbsp;s on the free tier.
+            </p>
+            <iframe class="preview-iframe" data-preview-iframe
+                    title="Hi-Fi Leads — live demo"
+                    src="https://hifi-leads-zm1f.onrender.com"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
+          </div>
         </div>
       </li>
 
@@ -239,6 +281,22 @@ try {
       section.querySelector('[data-resume-frame]').hidden = true;
       section.querySelector('[data-resume-missing]').hidden = false;
     });
+})();
+
+// Live-demo preview: drop the "waking…" overlay once the embedded app loads,
+// and after a longer wait nudge toward opening it directly if it's still cold.
+(function () {
+  var frame = document.querySelector('[data-preview-iframe]');
+  var note  = document.querySelector('[data-preview-loading]');
+  if (!frame || !note) return;
+
+  var loaded = false;
+  frame.addEventListener('load', function () { loaded = true; note.hidden = true; });
+  setTimeout(function () {
+    if (!loaded) note.innerHTML =
+      'Still waking the free-tier demo — you can ' +
+      '<a href="https://hifi-leads-zm1f.onrender.com" target="_blank" rel="noopener">open it in a new tab</a>.';
+  }, 20000);
 })();
 </script>
 
