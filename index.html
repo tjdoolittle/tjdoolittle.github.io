@@ -142,26 +142,14 @@ try {
 
       <!-- YouTube TV Auto-Skip -->
       <li class="card">
-        <!-- Conceptual illustration of what the app was built to do (there's no
-             web demo, and the screenshot version was dropped by preference). -->
-        <div class="card-visual">
-          <svg viewBox="0 0 320 168" class="yt-illustration" role="img"
-               aria-label="A TV screen playing an ad, with the Skip Ad button being auto-tapped">
-            <rect class="yt-screen" x="8" y="8" width="304" height="126" rx="10"/>
-            <path class="yt-video" d="M150 55 l26 16 -26 16 z"/>
-            <rect class="yt-ad-bg" x="24" y="22" width="40" height="20" rx="4"/>
-            <text class="yt-ad-tx" x="44" y="36" text-anchor="middle">AD</text>
-            <rect class="yt-skip-bg" x="198" y="98" width="96" height="26" rx="13"/>
-            <text class="yt-skip-tx" x="234" y="115" text-anchor="middle">Skip Ad</text>
-            <path class="yt-skip-ic" d="M270 105 l7 6 -7 6 z M278 105 l7 6 -7 6 z"/>
-            <g class="yt-tap">
-              <circle class="yt-tap-ring" cx="246" cy="111" r="15"/>
-              <circle class="yt-tap-dot" cx="246" cy="111" r="3"/>
-            </g>
-            <rect class="yt-stand" x="150" y="134" width="20" height="16"/>
-            <rect class="yt-base" x="126" y="150" width="68" height="6" rx="3"/>
-          </svg>
-        </div>
+        <figure class="card-visual">
+          <img src="assets/youtube-tv-autoskip.png"
+               alt="The TV app's settings screen: 'Service is ON — auto-skip is active', with toggles for Skip Ad, autoplay Next, toast notifications, and debug logging."
+               loading="lazy">
+          <figcaption class="visual-caption">
+            Service running on Google TV — but YouTube TV exposes no UI to interact with.
+          </figcaption>
+        </figure>
         <div class="card-head">
           <h3 class="card-title">YouTube TV Auto-Skip</h3>
           <span class="chip">Case study</span>
@@ -185,6 +173,43 @@ try {
 
       <!-- YouTube Auto-Skip (phone) -->
       <li class="card">
+        <div class="card-visual">
+          <svg viewBox="0 0 160 320" class="yt-phone-illustration" role="img"
+               aria-label="A phone screen showing YouTube Auto-Skip service status and toggles">
+            <!-- Phone frame -->
+            <rect class="phone-frame" x="8" y="12" width="144" height="296" rx="16" ry="16"/>
+            <!-- Screen -->
+            <rect class="phone-screen" x="12" y="20" width="136" height="280" rx="14"/>
+            <!-- Status bar -->
+            <rect class="phone-status" x="12" y="20" width="136" height="24" rx="14" ry="0"/>
+            <text class="phone-time" x="80" y="36" text-anchor="middle">9:41</text>
+            <!-- App header -->
+            <text class="phone-title" x="80" y="60" text-anchor="middle">YouTube Auto-Skip</text>
+            <text class="phone-status-text" x="80" y="75" text-anchor="middle">Service is ON</text>
+            <!-- Toggle items -->
+            <rect class="toggle-bg" x="18" y="90" width="124" height="28" rx="4"/>
+            <text class="toggle-label" x="24" y="108">Auto-press "Skip Ad"</text>
+            <circle class="toggle-on" cx="140" cy="104" r="9"/>
+            <circle class="toggle-dot" cx="140" cy="104" r="7"/>
+
+            <rect class="toggle-bg" x="18" y="126" width="124" height="28" rx="4"/>
+            <text class="toggle-label" x="24" y="144">Autoplay "Next"</text>
+            <circle class="toggle-on" cx="140" cy="140" r="9"/>
+            <circle class="toggle-dot" cx="140" cy="140" r="7"/>
+
+            <rect class="toggle-bg" x="18" y="162" width="124" height="28" rx="4"/>
+            <text class="toggle-label" x="24" y="180">Show toasts</text>
+            <circle class="toggle-on" cx="140" cy="176" r="9"/>
+            <circle class="toggle-dot" cx="140" cy="176" r="7"/>
+
+            <rect class="toggle-bg" x="18" y="198" width="124" height="28" rx="4"/>
+            <text class="toggle-label" x="24" y="216">Debug logging</text>
+            <circle class="toggle-off" cx="140" cy="212" r="9"/>
+
+            <!-- Notch -->
+            <rect class="phone-notch" x="58" y="12" width="44" height="12" rx="0" ry="6"/>
+          </svg>
+        </div>
         <div class="card-head">
           <h3 class="card-title">YouTube Auto-Skip</h3>
           <span class="chip chip-live">Live</span>

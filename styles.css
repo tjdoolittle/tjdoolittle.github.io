@@ -306,6 +306,28 @@ a { color: var(--accent); }
   color: var(--text-faint);
 }
 
+.card-visual svg { display: block; width: 100%; height: auto; }
+
+/* Phone mockup styling */
+.yt-phone-illustration {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.phone-frame { fill: var(--rule-strong); }
+.phone-screen { fill: var(--bg-card); stroke: var(--rule); stroke-width: .5; }
+.phone-status { fill: var(--text); }
+.phone-time { fill: var(--bg-card); font-size: 11px; font-weight: 600; }
+.phone-title { fill: var(--text); font-size: 13px; font-weight: 600; }
+.phone-status-text { fill: var(--accent); font-size: 11px; font-weight: 500; }
+.phone-notch { fill: var(--text); }
+
+.toggle-bg { fill: var(--bg-sunken); stroke: var(--rule); stroke-width: .5; }
+.toggle-label { fill: var(--text); font-size: 9px; font-family: var(--mono); }
+.toggle-on { fill: var(--accent); }
+.toggle-dot { fill: var(--bg-card); }
+.toggle-off { fill: var(--rule); }
+
 /* ---------------------------- feature card ----------------------------- */
 
 .card-feature {
