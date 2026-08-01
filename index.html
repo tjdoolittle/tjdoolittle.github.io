@@ -142,14 +142,26 @@ try {
 
       <!-- YouTube TV Auto-Skip -->
       <li class="card">
-        <figure class="card-visual">
-          <img src="assets/youtube-tv-autoskip.png"
-               alt="The app's settings screen on a TV: 'Service is ON — auto-skip is active', with toggles for auto-pressing Skip Ad and autoplay Next."
-               width="1920" height="1080" loading="lazy">
-          <figcaption class="visual-caption">
-            The service installs and runs — but YouTube TV exposes nothing for it to act on.
-          </figcaption>
-        </figure>
+        <!-- Conceptual illustration of what the app was built to do (there's no
+             web demo, and the screenshot version was dropped by preference). -->
+        <div class="card-visual">
+          <svg viewBox="0 0 320 168" class="yt-illustration" role="img"
+               aria-label="A TV screen playing an ad, with the Skip Ad button being auto-tapped">
+            <rect class="yt-screen" x="8" y="8" width="304" height="126" rx="10"/>
+            <path class="yt-video" d="M150 55 l26 16 -26 16 z"/>
+            <rect class="yt-ad-bg" x="24" y="22" width="40" height="20" rx="4"/>
+            <text class="yt-ad-tx" x="44" y="36" text-anchor="middle">AD</text>
+            <rect class="yt-skip-bg" x="198" y="98" width="96" height="26" rx="13"/>
+            <text class="yt-skip-tx" x="234" y="115" text-anchor="middle">Skip Ad</text>
+            <path class="yt-skip-ic" d="M270 105 l7 6 -7 6 z M278 105 l7 6 -7 6 z"/>
+            <g class="yt-tap">
+              <circle class="yt-tap-ring" cx="246" cy="111" r="15"/>
+              <circle class="yt-tap-dot" cx="246" cy="111" r="3"/>
+            </g>
+            <rect class="yt-stand" x="150" y="134" width="20" height="16"/>
+            <rect class="yt-base" x="126" y="150" width="68" height="6" rx="3"/>
+          </svg>
+        </div>
         <div class="card-head">
           <h3 class="card-title">YouTube TV Auto-Skip</h3>
           <span class="chip">Case study</span>
@@ -166,6 +178,28 @@ try {
         <ul class="tags">
           <li>Kotlin</li>
           <li>Android TV</li>
+          <li>Accessibility Service</li>
+          <li>GitHub Actions</li>
+        </ul>
+      </li>
+
+      <!-- YouTube Auto-Skip (phone) -->
+      <li class="card">
+        <div class="card-head">
+          <h3 class="card-title">YouTube Auto-Skip</h3>
+          <span class="chip chip-live">Live</span>
+        </div>
+        <p class="card-body">
+          An Android accessibility service that auto-presses "Skip Ad" and autoplay
+          "Next" in the YouTube phone app. Package <code>com.doolittle.autoskip</code>,
+          minSdk 21, targetSdk 34. Works because the phone YouTube app exposes its UI
+          to accessibility services — unlike the TV version. Features on-screen toasts
+          on each auto-click, debug logging for button-label tuning, and a settings
+          screen with status indicator. 5.5 MB debug build, all dependencies bundled.
+        </p>
+        <ul class="tags">
+          <li>Kotlin</li>
+          <li>Android</li>
           <li>Accessibility Service</li>
           <li>GitHub Actions</li>
         </ul>
