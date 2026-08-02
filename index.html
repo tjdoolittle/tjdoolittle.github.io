@@ -234,6 +234,52 @@ try {
       </li>
 
       <!--
+        Graphify — the graph itself is a static file on this same Pages account
+        (tjdoolittle/Graphify), so "Explore the graph" is a plain link. It is not
+        iframed here: the view runs a force simulation over 974 nodes and would
+        cost every homepage visitor that work whether they scrolled to it or not.
+      -->
+      <li class="card">
+        <div class="card-visual logo-plate">
+          <img src="assets/graphify-logo.svg"
+               alt="Graphify wordmark — a five-node graph beside the word Graphify"
+               width="260" height="64" loading="lazy">
+        </div>
+        <div class="card-head">
+          <h3 class="card-title">Graphify</h3>
+          <span class="chip chip-live">Live</span>
+        </div>
+        <p class="card-body">
+          A browsable knowledge graph of nine of my repos, built with the open-source
+          Graphify tool. It parses every file locally with AST extraction — no embeddings
+          and no vector store — then clusters the result into named communities.
+        </p>
+        <p class="card-body">
+          <strong>Why it saves tokens.</strong> Asking an AI assistant "what reaches this
+          function?" normally means reading a dozen files to re-derive relationships it
+          forgets by the next session. The graph indexes them once, so the same question
+          becomes a traversal that returns a focused subgraph instead of whole files. The
+          clustered view alone folds 10,368 symbols into 974 labelled groups — the cost is
+          paid at build time and amortized across every conversation after it.
+        </p>
+        <ul class="stat-strip">
+          <li><b>10,368</b><span>Symbols</span></li>
+          <li><b>16,485</b><span>Edges</span></li>
+          <li><b>974</b><span>Communities</span></li>
+        </ul>
+        <ul class="tags">
+          <li>Python</li>
+          <li>AST parsing</li>
+          <li>Community detection</li>
+          <li>Knowledge graph</li>
+        </ul>
+        <div class="card-links">
+          <a class="link-primary" href="https://tjdoolittle.github.io/Graphify/graph.html" target="_blank" rel="noopener">Explore the graph</a>
+          <a href="https://github.com/Graphify-Labs/graphify" target="_blank" rel="noopener">Graphify source</a>
+        </div>
+      </li>
+
+      <!--
         Hi-Fi Leads — full-width feature card with a click-to-load live demo.
         The demo is on Render's free tier, so it only wakes when a visitor clicks
         the poster (avoids a ~30s cold-start on every homepage visit). The script

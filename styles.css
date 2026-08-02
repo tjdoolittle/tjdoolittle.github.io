@@ -328,6 +328,55 @@ a { color: var(--accent); }
 .toggle-dot { fill: var(--bg-card); }
 .toggle-off { fill: var(--rule); }
 
+/* Wordmark plate — the logo carries its own dark background, so the plate
+   just centers it and gives it breathing room in either theme. */
+.logo-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background: var(--bg-sunken);
+}
+
+.logo-plate img {
+  width: 100%;
+  max-width: 232px;
+  height: auto;
+}
+
+/* Stat strip — a few verifiable numbers under a card body. */
+.stat-strip {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  margin: 1.15rem 0 0;
+  padding: .9rem 0 0;
+  border-top: 1px solid var(--rule);
+}
+
+.stat-strip li {
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+}
+
+.stat-strip b {
+  font-family: var(--mono);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-strip span {
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
 /* ---------------------------- feature card ----------------------------- */
 
 .card-feature {
