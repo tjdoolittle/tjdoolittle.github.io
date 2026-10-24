@@ -16,6 +16,7 @@ tracker (see below), and it stays off until you add a code.
 | `site.js` | Shared theme toggle + analytics loader. Holds the GoatCounter code. |
 | `resume.pdf` | The résumé the site serves. Replace this file to update it. |
 | `.nojekyll` | Tells Pages to serve the files as-is, no Jekyll processing. |
+| `mileage-log/` | The Mileage Log app (its own README covers it). |
 
 ## Visit stats
 
