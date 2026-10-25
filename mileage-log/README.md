@@ -25,9 +25,12 @@ never leave it unless you export them.
   readings. Once From and To are filled in, a link opens Google Maps directions
   so you can double-check the distance.
 - **Tax-ready totals.** A highway-sign odometer shows the year's business miles,
-  the deduction at the IRS standard rate (72.5¢ per mile for 2026, 70¢ for
-  2025), this month's miles, and a month-by-month chart. The rate can be changed
-  per year.
+  the deduction, this month's miles, and a month-by-month chart. Tap the year on
+  the sign to switch tax years.
+- **Rates that change midyear.** Each trip uses the IRS rate in effect on the
+  day it was driven. 2026 is built in: 72.5¢ per mile through June 30, then 76¢
+  from July 1. Tap the rate on the sign to add a rate change, edit one, or go
+  back to the IRS rates.
 - **IRS-friendly records.** Every trip requires a business purpose and keeps the
   date, start and end points, and miles, the details the IRS expects in a
   mileage log.

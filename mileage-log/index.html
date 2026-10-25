@@ -63,7 +63,19 @@ button{cursor:pointer}
 /* Guide sign */
 .sign{background:var(--sign);color:var(--sign-ink);border-radius:14px;padding:6px}
 .sign-inner{border:2.5px solid var(--sign-ink);border-radius:10px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:14px}
-.sign-label{font-family:var(--f-sign);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:13px;opacity:.92;display:flex;justify-content:space-between;gap:8px}
+.sign-label{font-family:var(--f-sign);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sign-btn{all:unset;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--sign-ink);border-radius:6px;padding:4px 2px;opacity:.95;white-space:nowrap}
+.sign-btn:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+.sign-btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.rate-list{display:flex;flex-direction:column}
+.rate-row{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.rate-row:focus-visible{outline:3px solid var(--amber)}
+.rate-row span{flex:1;min-width:0}
+.rate-row b{font-family:var(--f-sign);font-weight:800;font-size:19px;font-variant-numeric:tabular-nums}
+.rate-edit{border:1.5px solid var(--sign);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--surface)}
+.year-list{display:flex;flex-direction:column}
+.year-opt{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px 6px;border-bottom:1px solid var(--line);font-family:var(--f-sign);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.year-opt[aria-pressed="true"]{color:var(--sign-text)}
 .odo{display:flex;align-items:center;gap:3px;font-family:var(--f-mono);font-size:clamp(34px,11vw,52px);line-height:1;background:var(--odo-bg);padding:7px;border-radius:8px;width:max-content;max-width:100%;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)}
 .odo-cell{height:1em;width:.72em;overflow:hidden;position:relative;background:var(--odo-bg);color:var(--odo-fg);border-radius:3px;text-align:center}
 .odo-cell::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.45),transparent 28%,transparent 72%,rgba(0,0,0,.45));pointer-events:none}
@@ -195,7 +207,7 @@ textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;bo
 
   <section class="sign" aria-label="Year summary">
     <div class="sign-inner">
-      <div class="sign-label"><span id="sign-year">2026 Business miles</span><span id="sign-rate"></span></div>
+      <div class="sign-label"><button class="sign-btn" type="button" id="sign-year" aria-label="Change tax year">2026 ▾ Business miles</button><button class="sign-btn" type="button" id="sign-rate" aria-label="Change mileage rate"></button></div>
       <div class="odo" id="odo" aria-live="polite"></div>
       <div class="sign-stats">
         <div class="stat"><b id="s-deduct">$0</b><small>Deduction</small></div>
@@ -228,7 +240,8 @@ textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;bo
 <script>
 (function(){
 "use strict";
-const IRS_RATES = {2024:0.67, 2025:0.70, 2026:0.725};
+// IRS standard business rates. 2026 changed midyear: 72.5¢ through June 30, 76¢ from July 1.
+const IRS_RATES = [{from:"2024-01-01",rate:0.67},{from:"2025-01-01",rate:0.70},{from:"2026-01-01",rate:0.725},{from:"2026-07-01",rate:0.76}];
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -243,7 +256,23 @@ const num = v => { const n=parseFloat(String(v).replace(/,/g,"")); return isFini
 const fmtMi = n => n.toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1});
 const fmtUSD = n => n.toLocaleString("en-US",{style:"currency",currency:"USD"});
 const newId = () => "t-"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const rateFor = y => { const r=S.settings?.rates?.[y]; return typeof r==="number" ? r : (IRS_RATES[y] ?? IRS_RATES[2026]); };
+// Each rate applies from its start date until the next one starts. settings.ratePeriods overrides the IRS list;
+// older backups may carry settings.rates = {year: rate}, which replaces that whole year.
+function schedule(){
+  const st=S.settings||{};
+  let list = Array.isArray(st.ratePeriods) && st.ratePeriods.length ? st.ratePeriods.slice()
+    : IRS_RATES.filter(p=>typeof st.rates?.[+p.from.slice(0,4)]!=="number")
+        .concat(Object.entries(st.rates||{}).filter(([,r])=>typeof r==="number").map(([y,r])=>({from:y+"-01-01",rate:r})));
+  return list.sort((a,b)=>a.from.localeCompare(b.from));
+}
+function rateOn(date){
+  const sch=schedule(); if(!sch.length) return 0.725;
+  let r=sch[0].rate; for(const p of sch){ if(p.from<=date) r=p.rate; } return r;
+}
+const dedOf = t => (+t.miles||0)*rateOn(t.date);
+const fmtCents = r => { const c=Math.round(r*1000)/10; return (c%1===0?c.toFixed(0):c.toFixed(1)); };
+const longDate = iso => { const d=parseDate(iso); return MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear(); };
+const dayBefore = iso => { const d=parseDate(iso); d.setDate(d.getDate()-1); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); };
 const parseDate = iso => { const [y,m,d]=iso.split("-").map(Number); return new Date(y,m-1,d); };
 
 /* ---------- Storage ---------- */
@@ -311,16 +340,18 @@ function setOdo(n){
 
 /* ---------- Render ---------- */
 function render(){
-  const y=S.year, list=tripsFor(y), rate=rateFor(y);
+  const y=S.year, list=tripsFor(y);
   const total=list.reduce((a,t)=>a+(+t.miles||0),0);
+  const totalDed=list.reduce((a,t)=>a+dedOf(t),0);
   const now=new Date(), isCur=y===now.getFullYear();
+  const rate=rateOn(isCur?todayISO():y+"-12-31");
   const byMonth=Array(12).fill(0); list.forEach(t=>{ byMonth[+t.date.slice(5,7)-1]+=+t.miles||0; });
 
   $("years").innerHTML=yearsAvailable().map(yr=>`<button class="chip" type="button" data-year="${yr}" aria-pressed="${yr===y}">${yr}</button>`).join("");
-  $("sign-year").textContent=y+" Business miles";
-  $("sign-rate").textContent=(Math.round(rate*1000)/10)+"¢ / mi";
+  $("sign-year").textContent=y+" ▾ Business miles";
+  $("sign-rate").textContent=fmtCents(rate)+"¢ / mi ▾";
   setOdo(total);
-  $("s-deduct").textContent=fmtUSD(total*rate);
+  $("s-deduct").textContent=fmtUSD(totalDed);
   if(isCur){ $("s-month").textContent=fmtMi(byMonth[now.getMonth()]); $("s-month-l").textContent=MON[now.getMonth()]+" miles"; }
   else { const avg=total/12; $("s-month").textContent=fmtMi(avg); $("s-month-l").textContent="Avg / month"; }
   $("s-trips").textContent=list.length;
@@ -338,11 +369,11 @@ function render(){
     const groups={}; list.forEach(t=>{ const k=t.date.slice(0,7); (groups[k]=groups[k]||[]).push(t); });
     $("log").innerHTML=Object.keys(groups).sort().reverse().map(k=>{
       const ts=groups[k], sum=ts.reduce((a,t)=>a+(+t.miles||0),0);
-      return `<section class="month"><div class="month-head"><span>${MONTHS[+k.slice(5)-1]}</span><span>${fmtMi(sum)} mi · ${fmtUSD(sum*rate)}</span></div>`+
+      return `<section class="month"><div class="month-head"><span>${MONTHS[+k.slice(5)-1]}</span><span>${fmtMi(sum)} mi · ${fmtUSD(ts.reduce((a,t)=>a+dedOf(t),0))}</span></div>`+
         ts.map(t=>{ const d=parseDate(t.date);
           const route=[t.from,t.to].filter(Boolean).map(esc).join(" → ");
           const sub=[t.client?esc(t.client):"",route].filter(Boolean).join(" · ")||"No route entered";
-          return `<button class="trip" type="button" data-trip="${esc(t.id)}"><div class="d"><b>${d.getDate()}</b><small>${DOW[d.getDay()]}</small></div><div class="t-main"><div class="t-purpose">${esc(t.purpose)}${t.roundTrip?'<span class="rt">RT</span>':""}${t.source?'<span class="rt">GPS</span>':""}</div><div class="t-route">${sub}</div></div><div class="mi">${fmtMi(+t.miles)}<small>${fmtUSD(t.miles*rate)}</small></div></button>`;
+          return `<button class="trip" type="button" data-trip="${esc(t.id)}"><div class="d"><b>${d.getDate()}</b><small>${DOW[d.getDay()]}</small></div><div class="t-main"><div class="t-purpose">${esc(t.purpose)}${t.roundTrip?'<span class="rt">RT</span>':""}${t.source?'<span class="rt">GPS</span>':""}</div><div class="t-route">${sub}</div></div><div class="mi">${fmtMi(+t.miles)}<small>${fmtUSD(dedOf(t))}</small></div></button>`;
         }).join("")+`</section>`;
     }).join("");
   }
@@ -471,8 +502,8 @@ function wireTripForm(t,onSaved){
     let m=null;
     if(mode==="odo"){ const a=num($("f-o1").value), b=num($("f-o2").value); if(a!=null&&b!=null&&b>a) m=Math.round((b-a)*10)/10; }
     else { const v=num($("f-miles").value); if(v!=null&&v>0) m=$("f-rt").checked?v*2:v; }
-    const y=+($("f-date").value||todayISO()).slice(0,4);
-    $("f-calc").innerHTML = m ? `<b>${fmtMi(m)} mi</b> × ${(rateFor(y)*100).toFixed(1)}¢ = <b>${fmtUSD(m*rateFor(y))}</b> deduction` : "";
+    const r=rateOn($("f-date").value||todayISO());
+    $("f-calc").innerHTML = m ? `<b>${fmtMi(m)} mi</b> × ${fmtCents(r)}¢ = <b>${fmtUSD(m*r)}</b> deduction` : "";
     return m;
   };
   $("f-mode").addEventListener("click",e=>{
@@ -564,23 +595,24 @@ function openFinish(){
 }
 
 function csvFor(y){
-  const rate=rateFor(y), q=v=>{ const s=String(v??""); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const q=v=>{ const s=String(v??""); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
   const rows=[["Date","From","To","Business purpose","Client","Odometer start","Odometer end","Round trip","Miles","Rate per mile","Deduction","Notes","Source"]];
-  const list=tripsFor(y).slice().reverse(); let tot=0;
-  list.forEach(t=>{ tot+=+t.miles; rows.push([t.date,t.from,t.to,t.purpose,t.client,t.odoStart??"",t.odoEnd??"",t.roundTrip?"Yes":"",(+t.miles).toFixed(1),rate.toFixed(3),(t.miles*rate).toFixed(2),t.notes,t.source||"Manual"]); });
-  rows.push(["Total","","","","","","","",tot.toFixed(1),rate.toFixed(3),(tot*rate).toFixed(2),"",""]);
+  const list=tripsFor(y).slice().reverse(); let tot=0, totDed=0;
+  list.forEach(t=>{ const r=rateOn(t.date), d=Math.round(t.miles*r*100)/100; tot+=+t.miles; totDed+=d;
+    rows.push([t.date,t.from,t.to,t.purpose,t.client,t.odoStart??"",t.odoEnd??"",t.roundTrip?"Yes":"",(+t.miles).toFixed(1),r.toFixed(3),d.toFixed(2),t.notes,t.source||"Manual"]); });
+  rows.push(["Total","","","","","","","",tot.toFixed(1),"",totDed.toFixed(2),"",""]);
   return rows.map(r=>r.map(q).join(",")).join("\n");
 }
 
 function openSettings(){
-  const y=S.year, r=rateFor(y), count=tripsFor(y).length, irs=IRS_RATES[y];
-  openSheet(`${y} export & rate`,`
+  const y=S.year, count=tripsFor(y).length;
+  openSheet(`${y} export & rates`,`
     <div style="display:flex;flex-direction:column;gap:14px">
       <button class="btn primary" type="button" id="x-csv" ${count?"":"disabled"}>Export ${y} as CSV (${count} trips)</button>
       <div id="x-fallback"></div>
-      <div class="field"><label for="x-rate">Rate for ${y}, cents per mile</label><input id="x-rate" inputmode="decimal" value="${(r*100).toFixed(1)}" ${S.readOnly?"disabled":""}></div>
-      <p class="hint">${irs?`IRS standard business rate for ${y} is ${(irs*100).toFixed(1)}¢. `:""}The CSV includes date, route, purpose, and miles for every trip: the records the IRS asks you to keep.</p>
-      <button class="btn small" type="button" id="x-save" ${S.readOnly?"disabled":""}>Save rate</button>
+      <p class="hint">The CSV includes date, route, purpose, miles, and the rate used for every trip: the records the IRS asks you to keep.</p>
+      <div class="field"><span class="lbl">Mileage rates</span><p class="hint">Each rate applies from its start date until the next one starts. Every trip uses the rate in effect on the day it was driven. Tap a rate to change it.</p></div>
+      <div id="x-rates"></div>
       <div class="field"><span class="lbl">Backup</span><p class="hint">Trips live only on this phone. Save a backup to Files or iCloud Drive, and restore it on a new phone.</p></div>
       <div class="split"><button class="btn small" type="button" id="x-backup">Save backup</button><span class="btn small file-btn" role="button">Restore<input id="x-restore" type="file" accept=".json,application/json" aria-label="Restore from backup"></span></div>
       <p class="hint" id="x-restore-msg" hidden></p>
@@ -592,7 +624,7 @@ function openSettings(){
           const d=JSON.parse(await f.text()); if(d.app!=="mileage-log"||!Array.isArray(d.trips)) throw 0;
           const have=new Set(S.trips.map(t=>t.id)); let added=0;
           for(const t of d.trips){ if(t&&t.id&&t.date&&!have.has(t.id)){ await backend.saveTrip(t); added++; } }
-          if(d.settings) await backend.setSettings(Object.assign({},d.settings,S.settings,{rates:Object.assign({},d.settings.rates||{},S.settings?.rates||{})}));
+          if(d.settings) await backend.setSettings(Object.assign({},d.settings,S.settings,{rates:Object.assign({},d.settings.rates||{},S.settings?.rates||{}),ratePeriods:S.settings?.ratePeriods||d.settings.ratePeriods||undefined}));
           msg.textContent=`Restored ${added} trip${added===1?"":"s"}. ${d.trips.length-added} were already here.`; msg.hidden=false;
         }catch(err){ msg.textContent="That file isn't a Mileage Log backup."; msg.hidden=false; }
       });
@@ -602,12 +634,62 @@ function openSettings(){
         $("x-fallback").innerHTML=`<p class="hint">This browser blocked the download. Copy the CSV and paste it into Numbers, Excel, or a note.</p><textarea class="csv" id="x-text" readonly>${esc(data)}</textarea><button class="btn small" type="button" id="x-copy">Copy CSV</button>`;
         $("x-copy").onclick=()=>{ const ta=$("x-text"); navigator.clipboard.writeText(data).then(()=>toast("CSV copied"),()=>{ ta.focus(); ta.select(); toast("Selected. Use Copy from the menu."); }); };
       };
-      $("x-save").onclick=async()=>{
-        const c=num($("x-rate").value); if(c==null||c<=0||c>500){ toast("Enter a rate in cents, like 72.5"); return; }
-        const s=Object.assign({},S.settings||{},{rates:Object.assign({},S.settings?.rates||{},{[y]:Math.round(c*10)/1000})});
-        if(await write(()=>backend.setSettings(s))){ closeSheet(); toast("Rate saved"); }
-      };
+      renderRates();
     });
+}
+
+function saveSchedule(list){
+  const seen=new Set(), clean=list.filter(p=>p&&p.from&&!seen.has(p.from)&&seen.add(p.from)).sort((a,b)=>a.from.localeCompare(b.from));
+  const st=Object.assign({},S.settings||{}); st.rates={};
+  if(clean.length) st.ratePeriods=clean; else delete st.ratePeriods;
+  return write(()=>backend.setSettings(st));
+}
+function renderRates(editFrom){
+  const box=$("x-rates"); if(!box) return;
+  const sch=schedule(), custom=Array.isArray(S.settings?.ratePeriods)||Object.keys(S.settings?.rates||{}).length>0;
+  const rows=sch.map((p,i)=>{ const next=sch[i+1]; return {p,range: next?`${longDate(p.from)} to ${longDate(dayBefore(next.from))}`:`${longDate(p.from)} onward`}; }).reverse();
+  const editing = editFrom===undefined ? null : (editFrom==="new" ? {from:todayISO(),rate:null,isNew:true} : sch.find(p=>p.from===editFrom));
+  box.innerHTML=`<div class="rate-list">${rows.map(({p,range})=>
+      editing&&!editing.isNew&&editing.from===p.from ? editorHtml(editing,sch.length>1)
+      : `<button class="rate-row" type="button" data-rate="${p.from}" ${S.readOnly?"disabled":""}><span>${range}</span><b>${fmtCents(p.rate)}¢</b></button>`).join("")}</div>
+    ${editing&&editing.isNew?editorHtml(editing,false):""}
+    <div class="split" style="margin-top:10px"><button class="btn small" type="button" id="r-add" ${S.readOnly||editing?"disabled":""}>Add rate change</button>${custom?`<button class="btn small" type="button" id="r-irs" ${S.readOnly?"disabled":""}>Use IRS rates</button>`:"<span></span>"}</div>
+    <p class="hint" style="margin-top:8px">IRS business rate for 2026: 72.5¢ through June 30, then 76¢ from July 1 through December 31.</p>`;
+  box.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>renderRates(b.dataset.rate));
+  const add=$("r-add"); if(add) add.onclick=()=>renderRates("new");
+  const irs=$("r-irs"); if(irs) irs.onclick=async()=>{ const st=Object.assign({},S.settings||{}); delete st.ratePeriods; st.rates={}; if(await write(()=>backend.setSettings(st))){ toast("Using the IRS rates"); renderRates(); render(); } };
+  if(!editing) return;
+  $("r-cancel").onclick=()=>renderRates();
+  const del=$("r-del"); if(del) del.onclick=async()=>{ if(await saveSchedule(sch.filter(p=>p.from!==editing.from))){ toast("Rate removed"); renderRates(); render(); } };
+  $("r-save").onclick=async()=>{
+    const from=$("r-from").value, c=num(String($("r-cents").value).replace("¢",""));
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(from)){ $("r-err").textContent="Pick the date this rate starts."; $("r-err").hidden=false; return; }
+    if(c==null||c<=0||c>500){ $("r-err").textContent="Enter the rate in cents per mile, like 76."; $("r-err").hidden=false; return; }
+    const next=sch.filter(p=>p.from!==editing.from&&p.from!==from).concat([{from,rate:Math.round(c*10)/1000}]);
+    if(await saveSchedule(next)){ toast(`Rate saved. Trips from ${longDate(from)} on use ${fmtCents(Math.round(c*10)/1000)}¢.`); renderRates(); render(); }
+  };
+  setTimeout(()=>{ const f=$("r-cents"); f&&f.focus(); },50);
+}
+function editorHtml(e,canDelete){
+  return `<div class="rate-edit">
+    <div class="row"><div class="field"><label for="r-from">Starts on</label><input id="r-from" type="date" value="${esc(e.from)}"></div>
+    <div class="field"><label for="r-cents">Cents per mile</label><input id="r-cents" inputmode="decimal" placeholder="76" value="${e.rate!=null?fmtCents(e.rate):""}"></div></div>
+    <p class="err" id="r-err" role="alert" hidden></p>
+    <div class="split"><button class="btn small" type="button" id="r-cancel">Cancel</button><button class="btn small primary" type="button" id="r-save">Save rate</button></div>
+    ${!e.isNew&&canDelete?`<button class="btn small danger" type="button" id="r-del">Remove this rate</button>`:""}
+  </div>`;
+}
+
+/* ---------- Year picker ---------- */
+function openYearPicker(){
+  const cur=new Date().getFullYear(), ys=new Set();
+  for(let y=cur+1;y>=cur-4;y--) ys.add(y);
+  S.trips.forEach(t=>ys.add(+t.date.slice(0,4)));
+  const list=[...ys].filter(y=>y>2000).sort((a,b)=>b-a);
+  openSheet("Tax year",`<div class="year-list">${list.map(y=>{ const n=tripsFor(y).length;
+    return `<button class="year-opt" type="button" data-pick-year="${y}" aria-pressed="${y===S.year}"><span>${y}</span><small class="hint">${n?n+" trip"+(n>1?"s":""):""}${y===S.year?" ✓":""}</small></button>`; }).join("")}</div>`,()=>{
+    document.querySelectorAll("[data-pick-year]").forEach(b=>b.onclick=()=>{ S.year=+b.dataset.pickYear; closeSheet(); render(); });
+  });
 }
 
 /* ---------- Google Maps Timeline import ---------- */
@@ -775,6 +857,8 @@ document.addEventListener("click",async e=>{
   }
 });
 $("btn-settings").onclick=openSettings;
+$("sign-year").onclick=openYearPicker;
+$("sign-rate").onclick=openSettings;
 $("btn-import").onclick=()=>{ if(S.mode==="loading"){ toast("Still opening your log. Try again in a moment."); return; } openImport(); };
 
 init();
