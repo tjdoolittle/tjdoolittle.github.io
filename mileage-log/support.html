@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mileage Log Support</title>
+<meta name="description" content="Help with Mileage Log: automatic drive detection, permissions, rates, export, and backups.">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--bg:#ECEFEB;--surface:#FFFFFF;--ink:#18211D;--muted:#5B6862;--line:#D3D9D4;--sign:#0A6A4A;--sign-ink:#FFFFFF;--link:#0A6A4A;color-scheme:light;
+  --f-sign:"Overpass","Arial Narrow",system-ui,sans-serif;--f-body:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1311;--surface:#172019;--ink:#E5ECE8;--muted:#94A39B;--line:#29342F;--sign:#0D7653;--link:#5FC59A;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55}
+.wrap{max-width:680px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:24px 56px}
+.sign{background:var(--sign);color:var(--sign-ink);border-radius:14px;padding:6px;margin-bottom:28px}
+.sign-in{border:2.5px solid var(--sign-ink);border-radius:10px;padding:16px 18px}
+.eyebrow{font-family:var(--f-sign);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+h1{font-family:var(--f-sign);font-weight:800;font-size:clamp(28px,7vw,38px);line-height:1.1;margin:6px 0 0;text-wrap:balance}
+h2{font-family:var(--f-sign);font-weight:800;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin:32px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+p,li{max-width:65ch}
+a{color:var(--link);font-weight:700;text-underline-offset:3px}
+.muted{color:var(--muted);font-size:15px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+dt{font-weight:700;margin-top:14px}
+dd{margin:2px 0 0}
+footer{margin-top:40px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="sign"><div class="sign-in"><div class="eyebrow">Mileage Log</div><h1>Support</h1></div></header>
+<p>Questions, a bug, or a drive that didn't log the way you expected? Email <a href="mailto:doolittle.thomas@gmail.com">doolittle.thomas@gmail.com</a>. It helps to include your phone model and what you were doing.</p>
+
+<h2>Common questions</h2>
+<dl>
+<dt>Automatic detection didn't log a drive.</dt>
+<dd>Open Settings in the app and check the setup list. On iPhone, location must be set to <b>Always</b> and Motion &amp; Fitness allowed. Keep Background App Refresh on, and don't swipe Mileage Log away in the app switcher: iOS won't wake an app you've force-quit until you open it again. On Android, allow location <b>All the time</b> and set battery use to <b>Unrestricted</b>.</dd>
+
+<dt>Some drives are missing that I didn't take for work.</dt>
+<dd>Drives shorter than half a mile, or that never went faster than about 15 mph, are skipped so walks and parking-lot moves don't fill your list.</dd>
+
+<dt>How is distance measured?</dt>
+<dd>By adding up the distance between GPS readings during the drive. Inaccurate readings and GPS drift while parked are ignored. If the signal drops (a tunnel or parking deck), the gap is bridged in a straight line and noted on the trip.</dd>
+
+<dt>Which mileage rate does it use?</dt>
+<dd>The IRS standard business rate in effect on the day of each trip. For 2026 that's 72.5 cents per mile through June 30 and 76 cents from July 1. Tap the rate on the green sign to add or change a rate.</dd>
+
+<dt>How do I get my log to my accountant?</dt>
+<dd>Settings, then <b>Export CSV</b>. The file opens in Excel, Numbers, or Google Sheets and lists every business trip with its rate and deduction, plus totals.</dd>
+
+<dt>I'm getting a new phone.</dt>
+<dd>Settings, then <b>Save backup</b>, and keep the file in iCloud Drive, Google Drive, or Files. On the new phone, install Mileage Log and tap <b>Restore</b>. Backups also move between iPhone, Android, and the web version.</dd>
+</dl>
+
+<p class="muted">Mileage Log helps you keep records. It isn't tax advice; check with a tax professional about your situation.</p>
+<footer>Mileage Log by Thomas Doolittle · <a href="./">Web app</a> · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a></footer>
+</div>
+</body>
+</html>
