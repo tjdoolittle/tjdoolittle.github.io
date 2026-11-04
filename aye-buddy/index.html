@@ -7,7 +7,7 @@
 <meta name="description" content="A Doom-style browser game. One Canadian, one rink, way too many red hats. Fight with a hockey stick, ice skates and Maple Lager Molotovs.">
 <meta name="theme-color" content="#0b1120">
 <meta property="og:title" content="Aye Buddy">
-<meta property="og:description" content="One Canadian, one rink, way too many red hats. Sorry buddy, there!">
+<meta property="og:description" content="One Canadian, one rink, way too many red hats. Sorry buddy.">
 <meta property="og:image" content="https://tjdoolittle.github.io/assets/aye-buddy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -498,7 +498,7 @@ let bannerTimer = 0, toastTimer = 0;
 function banner(m, s, dur = 2.4) { $('bannerM').textContent = m; $('bannerS').textContent = s; bannerEl.hidden = false; bannerTimer = dur; }
 function toast(msg, dur = 1.6) { toastEl.textContent = msg; toastEl.hidden = false; toastTimer = dur; }
 function sayCatch(boss) {
-  catchEl.textContent = boss ? 'SORRY BUDDY, THERE!' : 'Sorry buddy, there!';
+  catchEl.textContent = 'Sorry buddy';
   catchEl.classList.remove('pop'); void catchEl.offsetWidth; catchEl.classList.add('pop');
   speak();
 }
