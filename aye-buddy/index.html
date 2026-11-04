@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aye Buddy</title>
+<meta name="description" content="A Doom-style browser game. One Canadian, one rink, way too many red hats. Fight with a hockey stick, ice skates and Maple Lager Molotovs.">
+<meta name="theme-color" content="#0b1120">
+<meta property="og:title" content="Aye Buddy">
+<meta property="og:description" content="One Canadian, one rink, way too many red hats. Sorry buddy, there!">
+<meta property="og:image" content="https://tjdoolittle.github.io/assets/aye-buddy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=VT323&family=Archivo:wght@400;600;800&display=swap">
+<style>
+/* Layout: a rink-board framed game screen as the hero, slim masthead above, key-cap legend below. Single committed night-rink look. */
+:root{
+  --night:#0b1120;
+  --night-2:#141c33;
+  --rink:#e9eef1;
+  --ice:#9cc7dc;
+  --maple:#d42a30;
+  --lager:#e2a33a;
+  --kick:#e3b923;
+  --ink:#f4efe4;
+  --dim:#8d99b0;
+  --display:'Bungee', Impact, 'Arial Black', sans-serif;
+  --mono:'VT323', ui-monospace, 'Courier New', monospace;
+  --body:'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+html,body{background:var(--night);color:var(--ink)}
+body{font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:18px 36px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.mast{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 18px}
+.mast h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(26px,4vw,40px);letter-spacing:.02em;color:var(--rink);text-shadow:3px 3px 0 var(--maple);text-wrap:balance}
+.mast p{margin:0;font-family:var(--mono);font-size:20px;color:var(--ice)}
+
+.stage{position:relative;width:min(100%, calc((100dvh - 170px) * 1.6));min-width:min(100%,300px);margin-inline:auto;aspect-ratio:16/10;max-width:100%;container-type:inline-size;background:#05070d;border:3px solid var(--rink);border-bottom:8px solid var(--kick);border-radius:6px;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
+.stage canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;cursor:crosshair}
+
+.hud{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 2fr .9fr 1fr;gap:1.2cqw;padding:.8cqw 1.6cqw 1cqw;background:linear-gradient(to top, rgba(5,7,13,.92), rgba(5,7,13,.6));border-top:2px solid rgba(233,238,241,.25);font-family:var(--mono);pointer-events:none}
+.hud .cell{display:flex;flex-direction:column;gap:.2cqw;min-width:0}
+.hud .lbl{font-size:max(10px,1.7cqw);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);line-height:1}
+.hud .val{font-size:max(16px,3.6cqw);line-height:.95;color:var(--rink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hud .bar{display:block;height:max(4px,.8cqw);background:rgba(233,238,241,.15);border-radius:2px;overflow:hidden}
+.hud .bar i{display:block;height:100%;width:100%;background:var(--maple);transition:width .15s}
+.hud .slotrow{display:flex;gap:.6cqw;flex-wrap:nowrap}
+.hud .slotrow b{font-weight:400;font-size:max(10px,1.8cqw);padding:.1cqw .6cqw;border:1px solid rgba(233,238,241,.3);border-radius:3px;color:var(--dim);white-space:nowrap}
+.hud .slotrow b.on{color:#0b1120;background:var(--rink);border-color:var(--rink)}
+.hud .ammo .val{color:var(--lager)}
+.hud .hp.low .val{color:var(--maple)}
+
+.catch{position:absolute;left:0;right:0;top:20%;text-align:center;font-family:var(--display);font-size:6cqw;color:var(--rink);text-shadow:.35cqw .35cqw 0 var(--maple);pointer-events:none;opacity:0;padding-inline:2cqw}
+.catch.pop{animation:pop 1.4s ease-out forwards}
+@keyframes pop{0%{opacity:0;transform:scale(.6) rotate(-4deg)}12%{opacity:1;transform:scale(1.12) rotate(2deg)}22%{transform:scale(1) rotate(0)}75%{opacity:1}100%{opacity:0;transform:translateY(-2cqw)}}
+.banner{position:absolute;left:0;right:0;top:34%;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:.6cqw;padding-inline:2cqw}
+.banner .m{font-family:var(--display);font-size:6.5cqw;color:var(--lager);text-shadow:.35cqw .35cqw 0 #3a1a04;line-height:1}
+.banner .s{font-family:var(--mono);font-size:3cqw;color:var(--rink)}
+.toast{position:absolute;left:50%;bottom:17%;transform:translateX(-50%);font-family:var(--mono);font-size:max(13px,2.6cqw);color:var(--lager);background:rgba(5,7,13,.75);padding:.3cqw 1.4cqw;border-radius:3px;pointer-events:none;white-space:nowrap}
+
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at center, rgba(11,17,32,.55), rgba(5,7,13,.88));padding:3cqw;text-align:center}
+.panel{display:flex;flex-direction:column;align-items:center;gap:1.4cqw;max-width:78cqw}
+.eyebrow{font-family:var(--mono);font-size:max(13px,2.4cqw);letter-spacing:.2em;text-transform:uppercase;color:var(--ice)}
+.big{margin:0;font-family:var(--display);font-weight:400;font-size:12cqw;line-height:.9;color:var(--rink);text-shadow:.6cqw .6cqw 0 var(--maple), 1.1cqw 1.1cqw 0 rgba(0,0,0,.5);text-wrap:balance}
+.panel p{margin:0;font-size:max(12px,1.9cqw);color:var(--ink);max-width:60ch;text-wrap:pretty}
+.panel .fine{font-family:var(--mono);font-size:max(13px,2.1cqw);color:var(--dim)}
+.btn{font-family:var(--display);font-size:max(14px,2.6cqw);padding:1cqw 3cqw;color:var(--night);background:var(--rink);border:0;border-radius:4px;box-shadow:inset 0 -.7cqw 0 var(--kick), 0 .5cqw 0 rgba(0,0,0,.4);cursor:pointer;letter-spacing:.03em}
+.btn:hover{background:#fff}
+.btn:focus-visible{outline:3px solid var(--lager);outline-offset:3px}
+.btn.ghost{background:transparent;color:var(--rink);box-shadow:inset 0 0 0 2px rgba(233,238,241,.4)}
+.row{display:flex;gap:1.4cqw;flex-wrap:wrap;justify-content:center}
+
+.touch{position:absolute;inset:0;pointer-events:none}
+.touch .pad{position:absolute;left:3cqw;bottom:16cqw;width:20cqw;height:20cqw;border-radius:50%;border:2px solid rgba(233,238,241,.35);background:rgba(233,238,241,.06);pointer-events:auto;touch-action:none}
+.touch .pad i{position:absolute;left:50%;top:50%;width:8cqw;height:8cqw;margin:-4cqw 0 0 -4cqw;border-radius:50%;background:rgba(233,238,241,.45)}
+.touch .tb{position:absolute;right:3cqw;border-radius:50%;display:grid;place-items:center;font-family:var(--display);color:var(--night);pointer-events:auto;touch-action:none;border:0}
+.touch .fire{bottom:16cqw;width:15cqw;height:15cqw;background:var(--maple);color:var(--rink);font-size:2.6cqw}
+.touch .swap{bottom:33cqw;width:10cqw;height:10cqw;background:var(--rink);font-size:2cqw;right:5.5cqw}
+
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px 24px;max-width:1180px}
+.legend div{display:flex;align-items:center;gap:10px;min-width:0;color:var(--dim)}
+.legend strong{color:var(--ink);font-weight:600}
+kbd{font-family:var(--mono);font-size:18px;line-height:1;padding:3px 7px 4px;border-radius:4px;background:var(--night-2);border:1px solid #2b3656;border-bottom-width:3px;color:var(--rink);white-space:nowrap}
+.note{font-size:13px;color:var(--dim);margin:0;max-width:70ch}
+
+@media (prefers-reduced-motion: reduce){
+  .catch.pop{animation:fade 1.4s linear forwards}
+  @keyframes fade{0%{opacity:1}75%{opacity:1}100%{opacity:0}}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="mast">
+    <h1>Aye Buddy</h1>
+    <p>One hoser. One rink. Way too many red hats. <a href="https://tjdoolittle.github.io/" style="color:var(--dim)">More projects</a></p>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="view" width="320" height="200" aria-label="Game view"></canvas>
+
+    <div class="hud" id="hud">
+      <div class="cell hp" id="hpCell"><span class="lbl">Health</span><span class="val" id="hpVal">100</span><span class="bar"><i id="hpBar"></i></span></div>
+      <div class="cell"><span class="lbl">Gear</span><span class="slotrow" id="slots"><b data-w="0" class="on">B Stick</b><b data-w="1">N Skates</b><b data-w="2">M Lager</b></span></div>
+      <div class="cell ammo"><span class="lbl">Maple Lager</span><span class="val" id="ammoVal">4</span></div>
+      <div class="cell"><span class="lbl">Wave / Kills</span><span class="val"><span id="waveVal">0</span> / <span id="killVal">0</span></span></div>
+    </div>
+
+    <div class="catch" id="catch"></div>
+    <div class="banner" id="banner" hidden><span class="m" id="bannerM"></span><span class="s" id="bannerS"></span></div>
+    <div class="toast" id="toast" hidden></div>
+
+    <div class="touch" id="touch" hidden>
+      <div class="pad" id="pad"><i id="padKnob"></i></div>
+      <button class="tb swap" id="swapBtn" type="button" aria-label="Switch weapon">GEAR</button>
+      <button class="tb fire" id="fireBtn" type="button" aria-label="Attack">HIT</button>
+    </div>
+
+    <div class="overlay" id="titleScr">
+      <div class="panel">
+        <span class="eyebrow">A hoser's last stand</span>
+        <h2 class="big">AYE BUDDY</h2>
+        <p>The red-hat horde has overrun the rink. Grab your stick, lace up the skates, and light a Maple Lager. Clear every wave, eh.</p>
+        <div class="row"><button class="btn" id="startBtn" type="button">Drop the puck</button></div>
+        <span class="fine" id="bestLine">Best: 0 kills</span>
+      </div>
+    </div>
+
+    <div class="overlay" id="overScr" hidden>
+      <div class="panel">
+        <span class="eyebrow">Game over</span>
+        <h2 class="big">HOSED.</h2>
+        <p id="overStats">You took out 0 zombies.</p>
+        <div class="row"><button class="btn" id="againBtn" type="button">Go again, bud</button></div>
+        <span class="fine" id="overBest"></span>
+      </div>
+    </div>
+
+    <div class="overlay" id="pauseScr" hidden>
+      <div class="panel">
+        <span class="eyebrow">Intermission</span>
+        <h2 class="big" style="font-size:9cqw">PAUSED</h2>
+        <div class="row"><button class="btn" id="resumeBtn" type="button">Back on the ice</button></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="legend" aria-label="Controls">
+    <div><kbd>W A S D</kbd><span><strong>Skate</strong> around</span></div>
+    <div><kbd>Mouse</kbd><span><strong>Look</strong> (click the screen to lock), or <kbd>Q</kbd> <kbd>E</kbd></span></div>
+    <div><kbd>Click</kbd><kbd>Space</kbd><span><strong>Attack</strong>, hold to keep swinging</span></div>
+    <div><kbd>B</kbd><kbd>N</kbd><kbd>M</kbd><span><strong>Stick, skates, Maple Lager</strong></span></div>
+    <div><kbd>O</kbd><span><strong>Minimap</strong> on or off</span></div>
+    <div><kbd>V</kbd><span><strong>Voice</strong> for the catchphrase</span></div>
+    <div><kbd>P</kbd><span><strong>Pause</strong></span></div>
+    <div><kbd>Shift</kbd><span><strong>Hustle</strong> (move faster)</span></div>
+  </section>
+  <p class="note">Poutine heals 30. Six-packs of Maple Lager give 3 throwables. Every fourth wave brings Big Hat. Your stick snaps after 50 hits and skates dull with every slash. Spare sticks and fresh skates are scattered around the rink: grab one and it comes back 30 seconds later.</p>
+</main>
+
+<script>
+(() => {
+'use strict';
+const W = 320, H = 200;
+const cv = document.getElementById('view');
+const ctx = cv.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+/* ---------- map ---------- */
+const MAP_SRC = [
+  '########################',
+  '#P.....#.......BBBBBBBB#',
+  '#......#.......B......B#',
+  '#..##..W...S...B..S...B#',
+  '#..##..W.......B......B#',
+  '#......#..A....BBB..BBB#',
+  '###.####...............#',
+  '#.......H..WWWW..WW....#',
+  '#..S....#..W..........S#',
+  '#.......#..W..A...#....#',
+  '#####..##..WWWW...#....#',
+  '#......................#',
+  '#..MMMM.....S.....MMMM.#',
+  '#..M..M...........M..M.#',
+  '#..M.HM.....A.....M..M.#',
+  '#..MM.M...........MM.M.#',
+  '#......................#',
+  '####.#####....#####.####',
+  '#......#........#......#',
+  '#..S...#...BB...#...S..#',
+  '#......W...BB...W......#',
+  '#..A...#........#..H...#',
+  '#......#........#......#',
+  '########################'
+];
+const MW = 24, MH = 24;
+const map = new Array(MW * MH);
+const spawns = [], pickupSpots = [];
+let startPos = { x: 1.5, y: 1.5 };
+for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+  const ch = MAP_SRC[y][x] || '#';
+  if ('#WBM'.includes(ch)) { map[y * MW + x] = ch; continue; }
+  map[y * MW + x] = '.';
+  if (ch === 'S') spawns.push({ x: x + .5, y: y + .5 });
+  if (ch === 'P') startPos = { x: x + .5, y: y + .5 };
+  if (ch === 'H') pickupSpots.push({ x: x + .5, y: y + .5, type: 'poutine' });
+  if (ch === 'A') pickupSpots.push({ x: x + .5, y: y + .5, type: 'lager' });
+}
+[[4.5, 9.5, 'stick'], [12.5, 8.5, 'stick'], [21.5, 21.5, 'stick'], [19.5, 13.5, 'skates'], [20.5, 2.5, 'skates'], [13.5, 21.5, 'skates']]
+  .forEach(([x, y, type]) => pickupSpots.push({ x, y, type }));
+const isSolid = (x, y) => {
+  const cx = Math.floor(x), cy = Math.floor(y);
+  if (cx < 0 || cy < 0 || cx >= MW || cy >= MH) return true;
+  return map[cy * MW + cx] !== '.';
+};
+
+/* ---------- helpers ---------- */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+function makeTex(fn, w = 64, h = 64) { const c = mkCanvas(w, h); const g = c.getContext('2d'); fn(g, w, h); return c; }
+function shadeCopy(src, a, col = '9,13,26') {
+  const c = mkCanvas(src.width, src.height); const g = c.getContext('2d');
+  g.drawImage(src, 0, 0); g.globalCompositeOperation = 'source-atop';
+  g.fillStyle = `rgba(${col},${a})`; g.fillRect(0, 0, c.width, c.height); return c;
+}
+const LEAF = [[0,-1],[.15,-.7],[.35,-.78],[.28,-.35],[.62,-.55],[.55,-.3],[.9,-.32],[.75,-.05],[.85,.08],[.42,.2],[.48,.42],[.08,.35],[.08,.8],[-.08,.8],[-.08,.35],[-.48,.42],[-.42,.2],[-.85,.08],[-.75,-.05],[-.9,-.32],[-.55,-.3],[-.62,-.55],[-.28,-.35],[-.35,-.78],[-.15,-.7]];
+function leaf(g, cx, cy, s, color) {
+  g.fillStyle = color; g.beginPath();
+  LEAF.forEach(([x, y], i) => i ? g.lineTo(cx + x * s, cy + y * s) : g.moveTo(cx + x * s, cy + y * s));
+  g.closePath(); g.fill();
+}
+
+/* ---------- wall textures ---------- */
+const texBrick = makeTex(g => {
+  const r = rng(1); g.fillStyle = '#3b2b2a'; g.fillRect(0, 0, 64, 64);
+  for (let row = 0; row < 8; row++) { const off = (row % 2) * 8; for (let col = -1; col < 4; col++) {
+    const x = col * 16 + off, s = 118 + r() * 40 | 0;
+    g.fillStyle = `rgb(${s},${48 + r() * 16 | 0},${36 + r() * 12 | 0})`; g.fillRect(x + 1, row * 8 + 1, 14, 6);
+    g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(x + 1, row * 8 + 1, 14, 1);
+  } }
+  for (let i = 0; i < 180; i++) { g.fillStyle = `rgba(0,0,0,${r() * .3})`; g.fillRect(r() * 64 | 0, r() * 64 | 0, 1, 1); }
+});
+const texWood = makeTex(g => {
+  const r = rng(2);
+  for (let p = 0; p < 8; p++) {
+    const b = 96 + r() * 26 | 0; g.fillStyle = `rgb(${b},${b * .62 | 0},${b * .34 | 0})`; g.fillRect(p * 8, 0, 8, 64);
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(p * 8 + 7, 0, 1, 64);
+    for (let i = 0; i < 7; i++) { g.fillStyle = 'rgba(40,20,8,.35)'; g.fillRect(p * 8 + 1 + (r() * 5 | 0), r() * 64 | 0, 1, 6 + r() * 14 | 0); }
+    g.fillStyle = '#cfc6b0'; g.fillRect(p * 8 + 3, 4, 1, 1); g.fillRect(p * 8 + 3, 59, 1, 1);
+  }
+  g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(0, 30, 64, 2);
+});
+const texBoards = makeTex(g => {
+  const r = rng(3); g.fillStyle = '#e6ebee'; g.fillRect(0, 0, 64, 64);
+  g.fillStyle = '#1f4fa0'; g.fillRect(0, 0, 64, 5);
+  g.fillStyle = '#c3cbd1'; g.fillRect(0, 5, 64, 1);
+  for (let i = 0; i < 26; i++) { g.fillStyle = `rgba(60,70,80,${.08 + r() * .15})`; g.fillRect(r() * 64 | 0, 30 + r() * 22 | 0, 2 + r() * 6 | 0, 1); }
+  leaf(g, 32, 28, 15, '#d42a30');
+  g.fillStyle = '#2a2f36'; g.fillRect(0, 52, 64, 1);
+  g.fillStyle = '#e3b923'; g.fillRect(0, 53, 64, 11);
+  g.fillStyle = 'rgba(0,0,0,.18)'; for (let i = 0; i < 12; i++) g.fillRect(r() * 64 | 0, 54 + r() * 9 | 0, 3, 1);
+  g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(63, 0, 1, 64);
+});
+const texLogs = makeTex(g => {
+  const r = rng(4);
+  for (let row = 0; row < 8; row++) {
+    const y = row * 8, b = 104 + r() * 24 | 0;
+    g.fillStyle = `rgb(${b},${b * .64 | 0},${b * .38 | 0})`; g.fillRect(0, y, 64, 8);
+    g.fillStyle = 'rgba(255,230,190,.14)'; g.fillRect(0, y + 1, 64, 2);
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect(0, y + 6, 64, 1);
+    g.fillStyle = '#cdb88e'; g.fillRect(0, y + 7, 64, 1);
+    for (let i = 0; i < 5; i++) { g.fillStyle = 'rgba(50,25,10,.35)'; g.fillRect(r() * 60 | 0, y + 2 + (r() * 4 | 0), 4 + r() * 10 | 0, 1); }
+  }
+});
+const TEX = {};
+[['#', texBrick], ['W', texWood], ['B', texBoards], ['M', texLogs]].forEach(([k, t]) => TEX[k] = [t, shadeCopy(t, .3)]);
+
+/* ---------- sky + floor ---------- */
+const SKY_W = Math.round(W * 360 / 77);
+const sky = makeTex((g, w, h) => {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#04050c'); gr.addColorStop(1, '#1b2647');
+  g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  const r = rng(5);
+  for (let i = 0; i < 260; i++) { const x = r() * SKY_W | 0, y = r() * 80 | 0, a = .3 + r() * .7; g.fillStyle = `rgba(230,240,255,${a})`; g.fillRect(x, y, 1, 1); if (x < W) g.fillRect(x + SKY_W, y, 1, 1); }
+  for (let x = 0; x < w; x++) {
+    const xx = x % SKY_W, k = Math.PI * 2 / SKY_W;
+    const y = 34 + Math.sin(xx * k * 3) * 10 + Math.sin(xx * k * 7 + 1) * 5;
+    const a = .18 + .14 * Math.sin(xx * k * 11);
+    const lg = g.createLinearGradient(0, y - 26, 0, y + 6);
+    lg.addColorStop(0, 'rgba(80,255,170,0)'); lg.addColorStop(.75, `rgba(80,255,170,${a.toFixed(3)})`); lg.addColorStop(1, 'rgba(80,255,170,0)');
+    g.fillStyle = lg; g.fillRect(x, y - 26, 1, 32);
+  }
+}, SKY_W + W, H / 2);
+const floor = makeTex((g, w, h) => {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#0d1424'); gr.addColorStop(.35, '#2c4560'); gr.addColorStop(1, '#a9cbdc');
+  g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  const r = rng(6);
+  for (let i = 0; i < 140; i++) { const y = 10 + r() * (h - 10); g.fillStyle = `rgba(255,255,255,${.04 + r() * .08})`; g.fillRect(r() * w | 0, y | 0, 4 + r() * 14 | 0, 1); }
+}, W, H / 2);
+const FOG = Array.from({ length: 23 }, (_, i) => `rgba(9,13,26,${(i * .04).toFixed(2)})`);
+
+/* ---------- sprites ---------- */
+const SK = '#7fa35a', SKD = '#5d7d40', JEAN = '#34466b', SHIRT = '#b8b09c', SHIRTD = '#8d8573', CAP = '#cf2027', CAPD = '#9c151b';
+function zombieTex(frame) {
+  return makeTex(g => {
+    const P = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+    const st = frame === 1;
+    P(JEAN, 24, 46, 7, st ? 12 : 14); P('#222', 23, st ? 58 : 60, 9, 3);
+    P(JEAN, 33, 46, 7, st ? 14 : 12); P('#222', 32, st ? 60 : 58, 9, 3);
+    P('#2b1d14', 24, 45, 16, 2);
+    P(SHIRT, 22, 27, 20, 19); P(SHIRTD, 22, 27, 3, 19); P(SHIRTD, 39, 27, 3, 19);
+    P(SK, 27, 35, 3, 2); P(SK, 35, 40, 4, 3); P('#7a2a22', 30, 30, 3, 3); P('#7a2a22', 25, 42, 2, 2);
+    if (frame === 2) {
+      P(SHIRT, 16, 24, 6, 6); P(SK, 15, 15, 6, 10); P(SKD, 14, 11, 8, 5);
+      P(SHIRT, 42, 24, 6, 6); P(SK, 43, 15, 6, 10); P(SKD, 42, 11, 8, 5);
+    } else {
+      const a = st ? 2 : 0, b = st ? 0 : 2;
+      P(SHIRT, 16, 27, 6, 5); P(SK, 15, 31, 6, 7 + a); P(SKD, 14, 37 + a, 7, 4);
+      P(SHIRT, 42, 27, 6, 5); P(SK, 43, 31, 6, 7 + b); P(SKD, 43, 37 + b, 7, 4);
+    }
+    P(SKD, 29, 23, 6, 5);
+    P(SK, 24, 9, 16, 15); P(SKD, 24, 9, 2, 15); P(SKD, 38, 9, 2, 15); P(SKD, 26, 22, 12, 2);
+    P('#1a1a10', 27, 14, 4, 3); P('#1a1a10', 33, 14, 4, 3); P('#f2e24a', 28, 15, 2, 1); P('#f2e24a', 34, 15, 2, 1);
+    if (frame === 2) { P('#2a0a0a', 28, 18, 8, 5); P('#e8e2c8', 29, 18, 2, 1); P('#e8e2c8', 33, 18, 2, 1); }
+    else { P('#2a0a0a', 29, 19, 6, 2); P('#e8e2c8', 30, 19, 1, 1); P('#e8e2c8', 33, 19, 1, 1); }
+    P('#7a1c18', 37, 12, 2, 3);
+    P(CAP, 23, 3, 18, 8); P(CAPD, 31, 2, 2, 1); P(CAPD, 32, 3, 1, 8); P('#e8474c', 25, 4, 5, 2);
+    P(CAPD, 21, 10, 22, 3); P('rgba(0,0,0,.35)', 24, 13, 16, 1);
+  });
+}
+const zWalk = [zombieTex(0), zombieTex(1)];
+const zAtk = zombieTex(2);
+const zHurt = shadeCopy(zWalk[0], .6, '255,255,255');
+const zDead = makeTex(g => {
+  const P = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  P('#5a1210', 8, 61, 48, 3);
+  P(JEAN, 6, 55, 16, 6); P('#222', 3, 55, 4, 6);
+  P(SHIRT, 22, 53, 20, 8); P('#7a2a22', 28, 55, 4, 3);
+  P(SK, 42, 53, 10, 8); P('#1a1a10', 45, 55, 2, 1); P('#2a0a0a', 47, 58, 3, 1);
+  P(SK, 26, 61, 12, 2);
+  P(CAP, 52, 56, 9, 5); P(CAPD, 50, 60, 13, 2);
+});
+const fireTex = [0, 1, 2].map(f => makeTex(g => {
+  const r = rng(20 + f);
+  g.fillStyle = 'rgba(255,110,20,.35)'; g.fillRect(4, 58, 56, 6);
+  for (let i = 0; i < 9; i++) {
+    const cx = 9 + i * 5.8 + (r() - .5) * 4, h = 18 + r() * 34 * (1 - Math.abs(i - 4) / 7);
+    for (let y = 0; y < h; y++) {
+      const k = y / h, w = Math.max(1, (1 - k) * (7 + r() * 2)), yy = 63 - y;
+      g.fillStyle = k < .5 ? '#e2561a' : '#f28c1d'; g.fillRect(cx - w / 2 | 0, yy, Math.ceil(w), 1);
+      if (k < .7) { const w2 = w * .5; g.fillStyle = k < .3 ? '#ffe27a' : '#ffb733'; g.fillRect(cx - w2 / 2 | 0, yy, Math.ceil(w2), 1); }
+    }
+  }
+}));
+const bottleTex = makeTex(g => {
+  const P = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  P('#8a4a10', 26, 26, 12, 34); P('#b8702a', 28, 28, 2, 28); P('#efe2c0', 26, 38, 12, 12); leaf(g, 32, 44, 4, '#cf2027');
+  P('#8a4a10', 29, 14, 6, 12); P('#e8e0d0', 28, 10, 8, 5); P('#ffb733', 29, 1, 6, 9); P('#ffe27a', 31, 4, 2, 5);
+});
+const poutineTex = makeTex(g => {
+  const P = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  const r = rng(7);
+  for (let i = 0; i < 16; i++) P(i % 3 ? '#f2c14e' : '#e0a838', 15 + r() * 32 | 0, 30 + r() * 8 | 0, 3, 14);
+  P('#6b3b1c', 16, 38, 32, 6); P('#6b3b1c', 22, 35, 12, 4); P('#8a5126', 20, 38, 8, 2);
+  for (let i = 0; i < 7; i++) P('#fbf6e6', 17 + r() * 28 | 0, 35 + r() * 7 | 0, 3, 3);
+  P('#f2f2ee', 12, 44, 40, 13); P(CAP, 12, 44, 40, 3); P('#d8d8d2', 16, 57, 32, 5); P('#bfbfb8', 20, 61, 24, 2);
+});
+const sixTex = makeTex(g => {
+  const P = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  for (let i = 0; i < 3; i++) { P('#8a4a10', 15 + i * 13, 22, 8, 16); P('#d9b13a', 15 + i * 13, 20, 8, 3); }
+  P('#c4202a', 10, 36, 44, 26); P('#9c151b', 10, 58, 44, 4); P('#7a1418', 26, 36, 12, 3);
+  leaf(g, 32, 48, 8, '#f4efe4');
+});
+const stickTex = makeTex(g => {
+  g.lineCap = 'butt'; g.strokeStyle = '#c8964f'; g.lineWidth = 5;
+  g.beginPath(); g.moveTo(46, 4); g.lineTo(22, 56); g.stroke();
+  g.strokeStyle = '#1b1b1f'; g.beginPath(); g.moveTo(47, 2); g.lineTo(44, 9); g.stroke();
+  g.fillStyle = '#1b1b1f'; g.fillRect(6, 54, 20, 8); g.fillStyle = '#e9e4d8'; g.fillRect(8, 56, 16, 1);
+  g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect(6, 62, 40, 2);
+});
+const skatesTex = makeTex(g => {
+  const P = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  for (const ox of [4, 34]) {
+    P('#202027', ox + 2, 34, 18, 14); P('#202027', ox + 4, 24, 12, 12); P('#3a3a45', ox + 2, 34, 18, 2);
+    for (let i = 0; i < 3; i++) P('#e9e4d8', ox + 6, 27 + i * 4, 8, 1);
+    P('#f0f0f0', ox + 3, 48, 4, 6); P('#f0f0f0', ox + 15, 48, 4, 6); P('#f0f0f0', ox + 3, 52, 16, 2);
+    P('#dfe5ea', ox, 56, 26, 3); P('#ffffff', ox + 6, 56, 4, 1);
+  }
+});
+const PICK_TEX = { poutine: poutineTex, lager: sixTex, stick: stickTex, skates: skatesTex };
+const shadeCache = new Map();
+function shaded(c, lvl) {
+  if (!lvl) return c;
+  let arr = shadeCache.get(c);
+  if (!arr) { arr = [c, shadeCopy(c, .22), shadeCopy(c, .44), shadeCopy(c, .66)]; shadeCache.set(c, arr); }
+  return arr[lvl];
+}
+
+/* ---------- audio ---------- */
+let AC = null, NB = null, master = null;
+function initAudio() {
+  if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
+  try {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    master = AC.createGain(); master.gain.value = .5; master.connect(AC.destination);
+    loadSay();
+    NB = AC.createBuffer(1, AC.sampleRate, AC.sampleRate);
+    const d = NB.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  } catch (e) { AC = null; }
+}
+function noise(dur, type, f0, f1, g0 = .6, delay = 0) {
+  if (!AC) return;
+  const t = AC.currentTime + delay, s = AC.createBufferSource(); s.buffer = NB;
+  const f = AC.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  const g = AC.createGain(); g.gain.setValueAtTime(g0, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random() * .5); s.stop(t + dur + .05);
+}
+function tone(f0, f1, dur, type = 'square', g0 = .3, delay = 0) {
+  if (!AC) return;
+  const t = AC.currentTime + delay, o = AC.createOscillator(); o.type = type;
+  o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  const g = AC.createGain(); g.gain.setValueAtTime(g0, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+}
+const SFX = {
+  swish: () => noise(.14, 'bandpass', 500, 2600, .35),
+  thwack: () => { noise(.09, 'lowpass', 1400, 200, .9); tone(140, 50, .12, 'square', .35); },
+  slice: () => { noise(.07, 'highpass', 3000, 6000, .45); tone(900, 1500, .06, 'sawtooth', .08); },
+  shatter: () => { noise(.3, 'highpass', 2500, 6000, .7); for (let i = 0; i < 4; i++) tone(2400 + Math.random() * 2600, 2000, .05, 'triangle', .14, i * .03); },
+  whoosh: () => noise(.8, 'lowpass', 250, 1800, .7, .03),
+  groan: () => tone(150 + Math.random() * 40, 55, .7, 'sawtooth', .16),
+  hurt: () => tone(240, 90, .18, 'square', .25),
+  pickup: () => { tone(660, 660, .08, 'triangle', .25); tone(990, 990, .12, 'triangle', .25, .08); },
+  click: () => tone(200, 180, .04, 'square', .15),
+  snap: () => { noise(.18, 'highpass', 1800, 900, .9); tone(320, 70, .2, 'square', .3); },
+  wave: () => [392, 523, 659, 784].forEach((f, i) => tone(f, f, .16, 'square', .12, i * .11)),
+  over: () => [392, 330, 262, 196].forEach((f, i) => tone(f, f * .98, .3, 'square', .14, i * .22)),
+};
+let voiceOn = true, lastSay = -9, sayBuf = null;
+const SAY_B64 = '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4QBTJcigYaoUBvNIExVV5XqAoVHKlWghqrQ3ZWyFu0PvI+9Rr8MZ+L1iZdgQEzPlyLcRwQ9PaQKBiUqaZYRLQulTKzdyyCDCCdyhmHlloytXYRtK4zkmTWsw19KvlKez2EFeu/8zYiXJLF65G4fP3UtM+CEeYgQSIap9Y18j3lkrm71TWDpDMLiiTpk9KNXvyhyYQMD1rFLYqeTWAFwCaB2saoD5kzl1u+7bOoOeSZZ1NSJwmiNm+rLZPGHJj8b/+3LE8AHRXN8/DDzSQk4z52GECukvUzy1JTTCIJppWv61pGMq9u5CSVHkSM3PP3y0TLkNyCk8HFATGOJawubEzkQ4uhJFuCgX2Qgs+TzU0c0wSpckRrvOd+Z0zmxtN2c3z5P9PNj/+e1LLNCmxoFo9zgm7fNhRHt09VUBGwAAEOAK9pSWKuotD7grde1iMblzLHbd6Zk1HOWWiv5QT8vjEupKKF4QLckmyEpnKvgqZB7KeOYfThk9znYtvF1DkDbMovClKPwjFClLtEXVyVjZVIzZc8lE4MFmXSKyE8OI/PO+RmXrZ7WNFgcRTLNDuhmlhVpdv/MoO+NOIF3CJTixoLJtFZp0auNpMgRKAECACqhZwICuxe1mCW1YFGAJHYilItEk9dKp4JRfEUvDsVSyVUAlLyawZXMWwP/7cMTzANO9xzqMpHWCITTn4YMOmCYFFhJyzUgVRK5+EikjcOWRg7DrnK02CMEjVHbOTjbOVprz202Kenmt8tTU8ts5XrXytnHytnDrIujCFDRYoaKOKsf9pQQr5IqSKkwZLCxx/HKf8osss1prSzDSRpxpUmSbJJUqJLzmOUVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+3LE8YDSKY09DBh1Al8iZWGGGTFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==';
+function loadSay() {
+  if (!AC || sayBuf) return;
+  try {
+    const bin = atob(SAY_B64), u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    AC.decodeAudioData(u.buffer, b => sayBuf = b, () => { });
+  } catch (e) { }
+}
+function speak() {
+  if (!voiceOn || !AC || !sayBuf) return;
+  const t = AC.currentTime; if (t - lastSay < .9) return; lastSay = t;
+  const s = AC.createBufferSource(); s.buffer = sayBuf;
+  const g = AC.createGain(); g.gain.value = 1.6;
+  s.connect(g); g.connect(master); s.start(t);
+}
+
+/* ---------- state ---------- */
+const WEAPONS = [
+  { name: 'Hockey Stick', cd: .5, dur: .34, range: 1.75, dmg: 40, arc: .6, multi: true, knock: .55 },
+  { name: 'Skates', cd: .22, dur: .2, range: 1.3, dmg: 22, arc: .45, multi: false, knock: .15 },
+  { name: 'Maple Lager', cd: .7, dur: .4, throwable: true }
+];
+let S, P, best = 0, showMap = true, paused = false;
+try { best = +localStorage.getItem('ayebuddy-best') || 0; } catch (e) { }
+
+function newState(mode) {
+  const s = {
+    mode, p: { x: startPos.x, y: startPos.y }, ang: 0, hp: 100, ammo: 4, weapon: 0,
+    cd: 0, anim: 0, animDur: .3, pendingHit: -1, side: 0, stickHits: 50, sharp: 1,
+    wave: 0, kills: 0, zombies: [], fires: [], projs: [],
+    pickups: pickupSpots.map(p => ({ ...p, active: true })),
+    spawnLeft: 0, bossPending: 0, spawnT: 0, phaseT: 0,
+    bob: 0, hurtFlash: 0, shake: 0, field: new Int16Array(MW * MH), fieldCell: -1, t: 0, fireHurtT: 0
+  };
+  return s;
+}
+function makeZombie(x, y, boss) {
+  const w = S.wave;
+  return { x, y, boss, hp: boss ? 520 + w * 20 : 40 + w * 8, speed: boss ? 1.05 : Math.min(2.5, 1 + w * .12) * (.85 + Math.random() * .3),
+    t: Math.random() * 2, atkCd: .6, hurt: 0, stun: 0, atkAnim: 0, dead: false, deadT: 0 };
+}
+function attract() {
+  S = newState('attract');
+  S.p = { x: 12.5, y: 11.5 }; S.ang = 0;
+  [[15.5, 11.5], [14.2, 9.2], [11, 14.4], [9.5, 11.2], [16.5, 13.5]].forEach(([x, y]) => S.zombies.push(makeZombie(x, y, false)));
+  P = S.p;
+}
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+const titleScr = $('titleScr'), overScr = $('overScr'), pauseScr = $('pauseScr');
+const catchEl = $('catch'), bannerEl = $('banner'), toastEl = $('toast'), touchEl = $('touch');
+let bannerTimer = 0, toastTimer = 0;
+function banner(m, s, dur = 2.4) { $('bannerM').textContent = m; $('bannerS').textContent = s; bannerEl.hidden = false; bannerTimer = dur; }
+function toast(msg, dur = 1.6) { toastEl.textContent = msg; toastEl.hidden = false; toastTimer = dur; }
+function sayCatch(boss) {
+  catchEl.textContent = boss ? 'SORRY BUDDY, THERE!' : 'Sorry buddy, there!';
+  catchEl.classList.remove('pop'); void catchEl.offsetWidth; catchEl.classList.add('pop');
+  speak();
+}
+function updateBest() { $('bestLine').textContent = `Best: ${best} kill${best === 1 ? '' : 's'}`; }
+updateBest();
+const coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+
+function startGame() {
+  initAudio();
+  S = newState('play'); P = S.p;
+  titleScr.hidden = true; overScr.hidden = true; pauseScr.hidden = true; paused = false;
+  touchEl.hidden = !coarse;
+  S.phaseT = 1.5; S.mode = 'break';
+  banner('Aye buddy', 'Lace up. They\'re coming.', 1.6);
+  lockPointer();
+}
+function nextWave() {
+  S.wave++;
+  S.spawnLeft = 3 + S.wave * 2; S.bossPending = S.wave % 4 === 0 ? 1 : 0; S.spawnT = .5;
+  S.mode = 'play'; SFX.wave();
+  banner(`Wave ${S.wave}`, S.bossPending ? 'Big Hat is coming, bud.' : 'Here they come, bud.');
+}
+function gameOver() {
+  S.mode = 'over'; SFX.over();
+  if (S.kills > best) { best = S.kills; try { localStorage.setItem('ayebuddy-best', best); } catch (e) { } }
+  $('overStats').textContent = `You took out ${S.kills} zombie${S.kills === 1 ? '' : 's'} and made it to wave ${S.wave}.`;
+  $('overBest').textContent = `Best: ${best} kills`;
+  updateBest();
+  overScr.hidden = false; touchEl.hidden = true;
+  try { document.exitPointerLock && document.exitPointerLock(); } catch (e) { }
+}
+function setPaused(v) {
+  if (!S || (S.mode !== 'play' && S.mode !== 'break')) return;
+  paused = v; pauseScr.hidden = !v;
+  if (!v) lockPointer();
+}
+function lockPointer() {
+  if (coarse) return;
+  try { const r = cv.requestPointerLock && cv.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } catch (e) { }
+}
+$('startBtn').addEventListener('click', startGame);
+$('againBtn').addEventListener('click', startGame);
+$('resumeBtn').addEventListener('click', () => setPaused(false));
+
+/* ---------- input ---------- */
+const keys = new Set();
+let mouseDown = false, touchFire = false;
+const inGame = () => S && (S.mode === 'play' || S.mode === 'break') && !paused;
+function selectWeapon(i) { if (S.weapon === i || S.pendingHit > 0) return; S.weapon = i; S.anim = 0; S.cd = Math.min(S.cd, .15); SFX.click(); }
+window.addEventListener('keydown', e => {
+  if (inGame() && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
+  if (e.repeat) { keys.add(e.code); return; }
+  keys.add(e.code);
+  if (!S) return;
+  if (inGame()) {
+    if (e.code === 'KeyB' || e.code === 'Digit1') selectWeapon(0);
+    if (e.code === 'KeyN' || e.code === 'Digit2') selectWeapon(1);
+    if (e.code === 'KeyM' || e.code === 'Digit3') selectWeapon(2);
+  }
+  if (e.code === 'KeyO') showMap = !showMap;
+  if (e.code === 'KeyV') { voiceOn = !voiceOn; toast(voiceOn ? 'Voice on' : 'Voice off'); }
+  if (e.code === 'KeyP') setPaused(!paused);
+});
+window.addEventListener('keyup', e => keys.delete(e.code));
+window.addEventListener('blur', () => { keys.clear(); mouseDown = false; });
+document.addEventListener('visibilitychange', () => { if (document.hidden && inGame()) setPaused(true); });
+cv.addEventListener('mousedown', e => {
+  if (!inGame()) return;
+  initAudio();
+  if (document.pointerLockElement !== cv) lockPointer();
+  mouseDown = true;
+});
+window.addEventListener('mouseup', () => mouseDown = false);
+window.addEventListener('mousemove', e => {
+  if (!inGame()) return;
+  if (document.pointerLockElement === cv) S.ang += e.movementX * .0026;
+  else if (mouseDown && !coarse) S.ang += (e.movementX || 0) * .006;
+});
+
+/* touch */
+const pad = $('pad'), knob = $('padKnob');
+let padId = null, padC = null, padV = { x: 0, y: 0 }, lookId = null, lookX = 0;
+pad.addEventListener('pointerdown', e => {
+  e.preventDefault(); initAudio(); padId = e.pointerId; try { pad.setPointerCapture(e.pointerId); } catch (_) { }
+  const r = pad.getBoundingClientRect(); padC = { x: r.left + r.width / 2, y: r.top + r.height / 2, r: r.width / 2 };
+  padMove(e);
+});
+function padMove(e) {
+  if (e.pointerId !== padId) return;
+  let dx = e.clientX - padC.x, dy = e.clientY - padC.y; const d = Math.hypot(dx, dy), m = padC.r * .8;
+  if (d > m) { dx *= m / d; dy *= m / d; }
+  padV = { x: dx / m, y: dy / m }; knob.style.transform = `translate(${dx}px,${dy}px)`;
+}
+pad.addEventListener('pointermove', padMove);
+const padEnd = e => { if (e.pointerId !== padId) return; padId = null; padV = { x: 0, y: 0 }; knob.style.transform = ''; };
+pad.addEventListener('pointerup', padEnd); pad.addEventListener('pointercancel', padEnd);
+const fireBtn = $('fireBtn');
+fireBtn.addEventListener('pointerdown', e => { e.preventDefault(); initAudio(); touchFire = true; });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => fireBtn.addEventListener(t, () => touchFire = false));
+$('swapBtn').addEventListener('pointerdown', e => { e.preventDefault(); if (inGame()) selectWeapon((S.weapon + 1) % 3); });
+cv.addEventListener('pointerdown', e => {
+  if (e.pointerType !== 'touch' || !inGame()) return;
+  lookId = e.pointerId; lookX = e.clientX; try { cv.setPointerCapture(e.pointerId); } catch (_) { }
+});
+cv.addEventListener('pointermove', e => {
+  if (e.pointerId !== lookId) return;
+  S.ang += (e.clientX - lookX) * .009; lookX = e.clientX;
+});
+const lookEnd = e => { if (e.pointerId === lookId) lookId = null; };
+cv.addEventListener('pointerup', lookEnd); cv.addEventListener('pointercancel', lookEnd);
+
+/* ---------- world logic ---------- */
+function moveEnt(e, mx, my, r) {
+  if (mx) { const nx = e.x + mx, ex = nx + Math.sign(mx) * r; if (!isSolid(ex, e.y - r) && !isSolid(ex, e.y + r)) e.x = nx; }
+  if (my) { const ny = e.y + my, ey = ny + Math.sign(my) * r; if (!isSolid(e.x - r, ey) && !isSolid(e.x + r, ey)) e.y = ny; }
+}
+function los(x0, y0, x1, y1) {
+  const dx = x1 - x0, dy = y1 - y0, n = Math.ceil(Math.hypot(dx, dy) / .15);
+  for (let i = 1; i < n; i++) { const t = i / n; if (isSolid(x0 + dx * t, y0 + dy * t)) return false; }
+  return true;
+}
+const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+function updateField() {
+  const c = Math.floor(P.y) * MW + Math.floor(P.x);
+  if (c === S.fieldCell) return; S.fieldCell = c;
+  const f = S.field; f.fill(-1); f[c] = 0; const q = [c];
+  for (let i = 0; i < q.length; i++) {
+    const k = q[i], x = k % MW, y = (k / MW) | 0;
+    for (const [dx, dy] of DIRS) {
+      const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= MW || ny >= MH) continue;
+      const nk = ny * MW + nx; if (f[nk] !== -1 || map[nk] !== '.') continue;
+      f[nk] = f[k] + 1; q.push(nk);
+    }
+  }
+}
+function hurtPlayer(d) {
+  if (S.mode === 'over') return;
+  S.hp -= d; S.hurtFlash = Math.min(.7, S.hurtFlash + .35); SFX.hurt();
+  if (S.hp <= 0) { S.hp = 0; gameOver(); }
+}
+function hurtZombie(z, dmg, kx = 0, ky = 0, kn = 0) {
+  if (z.dead) return;
+  z.hp -= dmg; z.hurt = .12;
+  if (kn && !z.boss) { moveEnt(z, kx * kn, ky * kn, .25); z.stun = .28; }
+  if (z.hp <= 0) killZombie(z);
+}
+function killZombie(z) {
+  z.dead = true; z.deadT = 0; S.kills++;
+  sayCatch(z.boss);
+  if (z.boss) { S.shake = .35; S.pickups.forEach(p => p.active = true); toast('Big Hat is down. Pickups restocked.'); }
+}
+function attack() {
+  const w = WEAPONS[S.weapon];
+  if (S.weapon === 0 && S.stickHits <= 0) { SFX.click(); toast('Stick is snapped. Find a new one on the ice.'); S.cd = .4; return; }
+  if (w.throwable) {
+    if (S.ammo <= 0) { SFX.click(); toast('Out of Maple Lager. Find a six-pack.'); S.cd = .4; return; }
+    S.ammo--;
+  }
+  S.cd = w.cd; S.anim = w.dur; S.animDur = w.dur; S.pendingHit = w.dur * .4; S.side ^= 1;
+  SFX.swish();
+}
+function resolveHit() {
+  const w = WEAPONS[S.weapon], dx0 = Math.cos(S.ang), dy0 = Math.sin(S.ang);
+  if (w.throwable) {
+    S.projs.push({ x: P.x + dx0 * .3, y: P.y + dy0 * .3, vx: dx0 * 7.5, vy: dy0 * 7.5, z: .45, vz: 1.1, spin: 0 });
+    return;
+  }
+  let hits = [];
+  for (const z of S.zombies) {
+    if (z.dead) continue;
+    const dx = z.x - P.x, dy = z.y - P.y, d = Math.hypot(dx, dy);
+    if (d > w.range + (z.boss ? .45 : 0) || d < .01) continue;
+    if ((dx * dx0 + dy * dy0) / d < Math.cos(w.arc)) continue;
+    if (!los(P.x, P.y, z.x, z.y)) continue;
+    hits.push([d, z, dx / d, dy / d]);
+  }
+  hits.sort((a, b) => a[0] - b[0]);
+  if (!w.multi) hits = hits.slice(0, 1);
+  if (!hits.length) return;
+  let dmg = w.dmg, kn = w.knock;
+  if (S.weapon === 0) { SFX.thwack(); S.shake = .15; }
+  else { SFX.slice(); const f = Math.max(.3, S.sharp); dmg = Math.round(w.dmg * f); kn = w.knock * f; }
+  for (const [, z, nx, ny] of hits) hurtZombie(z, dmg, nx, ny, kn);
+  if (S.weapon === 0) {
+    S.stickHits--;
+    if (S.stickHits === 10) toast('Stick is cracking. 10 hits left.');
+    if (S.stickHits <= 0) { SFX.snap(); S.shake = .3; toast('SNAP! Stick broke. Go find another.', 2.2); S.weapon = 1; }
+  } else {
+    const before = S.sharp; S.sharp = Math.max(0, S.sharp - .025);
+    if (before > .5 && S.sharp <= .5) toast('Skates are getting dull. Look for a fresh pair.');
+    if (before > .3 && S.sharp <= .3) toast('Skates are dull as a butter knife.');
+  }
+}
+function explode(x, y) {
+  SFX.shatter(); SFX.whoosh();
+  const r = Math.random;
+  S.fires.push({ x, y, t: 0, life: 5, flames: Array.from({ length: 6 }, (_, i) => {
+    const a = i / 6 * Math.PI * 2 + r(), d = i ? .3 + r() * .5 : 0;
+    let fx = x + Math.cos(a) * d, fy = y + Math.sin(a) * d;
+    if (isSolid(fx, fy)) { fx = x; fy = y; }
+    return { x: fx, y: fy, ph: r() * 3, s: .8 + r() * .4 };
+  }) });
+  for (const z of S.zombies) if (!z.dead && Math.hypot(z.x - x, z.y - y) < 1.3) hurtZombie(z, 22);
+  if (Math.hypot(P.x - x, P.y - y) < 1) hurtPlayer(5);
+}
+
+function update(dt) {
+  S.t += dt;
+  if (bannerTimer > 0) { bannerTimer -= dt; if (bannerTimer <= 0) bannerEl.hidden = true; }
+  if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) toastEl.hidden = true; }
+
+  if (S.mode === 'attract') {
+    S.ang += dt * .18;
+    for (const z of S.zombies) { z.t += dt; z.atkAnim = Math.sin(z.t * 1.3) > .85 ? .1 : 0; }
+    return;
+  }
+  if (S.mode === 'over') { for (const f of S.fires) f.t += dt; return; }
+
+  /* player movement */
+  let fwd = 0, str = 0, turn = 0;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) fwd += 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) fwd -= 1;
+  if (keys.has('KeyA')) str -= 1;
+  if (keys.has('KeyD')) str += 1;
+  if (keys.has('ArrowLeft') || keys.has('KeyQ')) turn -= 1;
+  if (keys.has('ArrowRight') || keys.has('KeyE')) turn += 1;
+  fwd -= padV.y; str += padV.x;
+  S.ang += turn * 2.6 * dt;
+  const c = Math.cos(S.ang), s = Math.sin(S.ang);
+  let mx = c * fwd - s * str, my = s * fwd + c * str;
+  const ml = Math.hypot(mx, my);
+  if (ml > .05) {
+    if (ml > 1) { mx /= ml; my /= ml; }
+    const spd = 3.2 * (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 1.4 : 1);
+    moveEnt(P, mx * spd * dt, my * spd * dt, .22);
+    S.bob += dt * 10 * Math.min(1, ml);
+  }
+
+  /* weapons */
+  S.cd -= dt;
+  if (S.anim > 0) S.anim = Math.max(0, S.anim - dt);
+  if (S.pendingHit > 0) { S.pendingHit -= dt; if (S.pendingHit <= 0) { S.pendingHit = -1; resolveHit(); } }
+  if ((mouseDown || keys.has('Space') || touchFire) && S.cd <= 0) attack();
+  S.hurtFlash = Math.max(0, S.hurtFlash - dt * 1.4);
+  S.shake = Math.max(0, S.shake - dt);
+
+  /* waves */
+  if (S.mode === 'break') {
+    S.phaseT -= dt; if (S.phaseT <= 0) nextWave();
+  } else {
+    S.spawnT -= dt;
+    const alive = S.zombies.filter(z => !z.dead).length;
+    if ((S.spawnLeft > 0 || S.bossPending) && S.spawnT <= 0 && alive < 14) {
+      const opts = spawns.filter(p => Math.hypot(p.x - P.x, p.y - P.y) > 5);
+      const sp = (opts.length ? opts : spawns)[Math.random() * (opts.length || spawns.length) | 0];
+      if (S.spawnLeft > 0) { S.zombies.push(makeZombie(sp.x, sp.y, false)); S.spawnLeft--; }
+      else { S.zombies.push(makeZombie(sp.x, sp.y, true)); S.bossPending = 0; }
+      S.spawnT = Math.max(.45, 1.4 - S.wave * .08);
+    }
+    if (!S.spawnLeft && !S.bossPending && !alive) {
+      S.mode = 'break'; S.phaseT = 4;
+      S.pickups.forEach(p => p.active = true);
+      S.zombies = S.zombies.filter(z => !z.dead || z.deadT < 3);
+      banner('Wave cleared', 'Pickups restocked around the rink.', 3);
+    }
+  }
+
+  /* zombies */
+  updateField();
+  for (const z of S.zombies) {
+    if (z.dead) { z.deadT += dt; continue; }
+    z.t += dt * (z.speed / 1.2); z.hurt -= dt; z.stun -= dt; z.atkCd -= dt; z.atkAnim -= dt;
+    const dx = P.x - z.x, dy = P.y - z.y, d = Math.hypot(dx, dy);
+    const reach = z.boss ? 1.15 : .8;
+    if (d < reach) {
+      if (z.atkCd <= 0) { z.atkCd = z.boss ? 1.1 : 1; z.atkAnim = .35; hurtPlayer(z.boss ? 20 : 7 + S.wave); }
+      continue;
+    }
+    if (z.stun > 0) continue;
+    let tx = P.x, ty = P.y;
+    if (!los(z.x, z.y, P.x, P.y)) {
+      const cx = Math.floor(z.x), cy = Math.floor(z.y), f = S.field;
+      let bestV = f[cy * MW + cx], bx = -1, by = -1;
+      for (const [ox, oy] of DIRS) {
+        const nx = cx + ox, ny = cy + oy; if (nx < 0 || ny < 0 || nx >= MW || ny >= MH) continue;
+        const v = f[ny * MW + nx]; if (v >= 0 && (bestV < 0 || v < bestV)) { bestV = v; bx = nx; by = ny; }
+      }
+      if (bx >= 0) { tx = bx + .5; ty = by + .5; }
+    }
+    const vx = tx - z.x, vy = ty - z.y, vl = Math.hypot(vx, vy) || 1;
+    moveEnt(z, vx / vl * z.speed * dt, vy / vl * z.speed * dt, z.boss ? .32 : .24);
+  }
+  const al = S.zombies.filter(z => !z.dead);
+  for (let i = 0; i < al.length; i++) for (let j = i + 1; j < al.length; j++) {
+    const a = al[i], b = al[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy), m = (a.boss || b.boss) ? .8 : .5;
+    if (d < m && d > .001) { const p = (m - d) / 2, nx = dx / d * p, ny = dy / d * p; moveEnt(a, -nx, -ny, .24); moveEnt(b, nx, ny, .24); }
+  }
+
+  /* projectiles */
+  for (let i = S.projs.length - 1; i >= 0; i--) {
+    const p = S.projs[i];
+    p.vz -= 3.4 * dt; p.z += p.vz * dt; p.spin += dt;
+    const nx = p.x + p.vx * dt, ny = p.y + p.vy * dt;
+    let boom = false;
+    if (isSolid(nx, ny)) boom = true;
+    else {
+      p.x = nx; p.y = ny;
+      if (p.z <= .03) boom = true;
+      else if (p.z < .95) for (const z of S.zombies) if (!z.dead && Math.hypot(z.x - p.x, z.y - p.y) < (z.boss ? .6 : .42)) { boom = true; break; }
+    }
+    if (boom) { explode(p.x, p.y); S.projs.splice(i, 1); }
+  }
+
+  /* fires */
+  let inFire = false;
+  for (let i = S.fires.length - 1; i >= 0; i--) {
+    const f = S.fires[i]; f.t += dt;
+    if (f.t > f.life) { S.fires.splice(i, 1); continue; }
+    for (const z of S.zombies) if (!z.dead && Math.hypot(z.x - f.x, z.y - f.y) < 1.35) { z.hp -= 45 * dt; if (z.hp <= 0) killZombie(z); }
+    if (Math.hypot(P.x - f.x, P.y - f.y) < .95) inFire = true;
+  }
+  if (inFire && S.mode !== 'over') {
+    S.hp -= 14 * dt; S.hurtFlash = Math.max(S.hurtFlash, .25);
+    S.fireHurtT -= dt; if (S.fireHurtT <= 0) { SFX.hurt(); S.fireHurtT = .5; }
+    if (S.hp <= 0) { S.hp = 0; gameOver(); }
+  }
+
+  /* pickups */
+  for (const p of S.pickups) {
+    if (!p.active) { if (p.respawn > 0) { p.respawn -= dt; if (p.respawn <= 0) p.active = true; } continue; }
+    if (Math.hypot(p.x - P.x, p.y - P.y) > .55) continue;
+    if (p.type === 'poutine' && S.hp < 100) { S.hp = Math.min(100, S.hp + 30); p.active = false; SFX.pickup(); toast('Poutine. +30 health'); }
+    if (p.type === 'lager' && S.ammo < 12) { S.ammo = Math.min(12, S.ammo + 3); p.active = false; SFX.pickup(); toast('Six-pack of Maple Lager. +3'); }
+    if (p.type === 'stick' && S.stickHits < 50) { const was = S.stickHits; S.stickHits = 50; p.active = false; p.respawn = 30; SFX.pickup(); toast('Fresh stick. 50 hits'); if (was <= 0) S.weapon = 0; }
+    if (p.type === 'skates' && S.sharp < .99) { S.sharp = 1; p.active = false; p.respawn = 30; SFX.pickup(); toast('New skates. Sharp as heck'); }
+  }
+}
+
+/* ---------- render ---------- */
+const zbuf = new Float32Array(W);
+const R = (c, x, y, w, h) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
+function render() {
+  const a = S.ang, dirX = Math.cos(a), dirY = Math.sin(a), planeX = -dirY * .8, planeY = dirX * .8;
+  const shk = S.shake > 0 ? S.shake * 18 : 0;
+  ctx.save();
+  if (shk) ctx.translate((Math.random() - .5) * shk | 0, (Math.random() - .5) * shk | 0);
+
+  let off = ((a / (Math.PI * 2)) * SKY_W) % SKY_W; if (off < 0) off += SKY_W;
+  ctx.drawImage(sky, off | 0, 0, W, H / 2, 0, 0, W, H / 2);
+  ctx.drawImage(floor, 0, H / 2);
+
+  for (let x = 0; x < W; x++) {
+    const camX = 2 * x / W - 1, rdx = dirX + planeX * camX, rdy = dirY + planeY * camX;
+    let mapX = Math.floor(P.x), mapY = Math.floor(P.y);
+    const ddx = Math.abs(1 / rdx), ddy = Math.abs(1 / rdy);
+    let stepX, stepY, sdx, sdy, side = 0, ch = '#';
+    if (rdx < 0) { stepX = -1; sdx = (P.x - mapX) * ddx; } else { stepX = 1; sdx = (mapX + 1 - P.x) * ddx; }
+    if (rdy < 0) { stepY = -1; sdy = (P.y - mapY) * ddy; } else { stepY = 1; sdy = (mapY + 1 - P.y) * ddy; }
+    for (let i = 0; i < 64; i++) {
+      if (sdx < sdy) { sdx += ddx; mapX += stepX; side = 0; } else { sdy += ddy; mapY += stepY; side = 1; }
+      if (mapX < 0 || mapY < 0 || mapX >= MW || mapY >= MH) { ch = '#'; break; }
+      ch = map[mapY * MW + mapX]; if (ch !== '.') break;
+    }
+    const perp = Math.max(.02, side === 0 ? sdx - ddx : sdy - ddy);
+    zbuf[x] = perp;
+    let wx = side === 0 ? P.y + perp * rdy : P.x + perp * rdx; wx -= Math.floor(wx);
+    let tx = (wx * 64) | 0; if (side === 0 && rdx > 0) tx = 63 - tx; if (side === 1 && rdy < 0) tx = 63 - tx;
+    const lh = H / perp, y0 = H / 2 - lh / 2;
+    ctx.drawImage((TEX[ch] || TEX['#'])[side], tx, 0, 1, 64, x, y0, 1, lh);
+    const fi = Math.min(22, (perp / 13 / .04) | 0);
+    if (fi > 0) { ctx.fillStyle = FOG[fi]; ctx.fillRect(x, Math.max(0, y0), 1, Math.min(H, lh)); }
+  }
+
+  /* sprites */
+  const list = [];
+  for (const z of S.zombies) {
+    let img;
+    if (z.dead) img = zDead; else if (z.hurt > 0) img = zHurt; else if (z.atkAnim > 0) img = zAtk; else img = zWalk[((z.t * 4) | 0) % 2];
+    list.push({ x: z.x, y: z.y, img, h: z.boss ? 1.45 : .95, z: 0 });
+  }
+  for (const f of S.fires) {
+    const fade = Math.min(1, (f.life - f.t) / 1.2) * Math.min(1, f.t * 6 + .3);
+    for (const fl of f.flames) list.push({ x: fl.x, y: fl.y, img: fireTex[((S.t * 10 + fl.ph * 3) | 0) % 3], h: .55 * fl.s * fade, z: 0, glow: true });
+  }
+  for (const p of S.projs) list.push({ x: p.x, y: p.y, img: bottleTex, h: .26, z: p.z - .13, glow: true });
+  for (const p of S.pickups) if (p.active) list.push({ x: p.x, y: p.y, img: PICK_TEX[p.type], h: p.type === 'stick' ? .5 : .4, z: .02 + Math.abs(Math.sin(S.t * 2.5 + p.x)) * .05 });
+  for (const s of list) s.d = (s.x - P.x) ** 2 + (s.y - P.y) ** 2;
+  list.sort((a, b) => b.d - a.d);
+  const invDet = 1 / (planeX * dirY - dirX * planeY);
+  for (const s of list) {
+    const dx = s.x - P.x, dy = s.y - P.y;
+    const tx = invDet * (dirY * dx - dirX * dy), ty = invDet * (-planeY * dx + planeX * dy);
+    if (ty < .15) continue;
+    const sx = (W / 2) * (1 + tx / ty), ph = s.h * H / ty, pw = ph;
+    const top = H / 2 + (.5 - (s.z + s.h)) * H / ty, left = sx - pw / 2;
+    const x0 = Math.max(0, Math.floor(left)), x1 = Math.min(W - 1, Math.floor(left + pw));
+    const img = shaded(s.img, s.glow ? 0 : Math.min(3, (ty / 4.5) | 0));
+    for (let x = x0; x <= x1; x++) {
+      if (ty >= zbuf[x]) continue;
+      let t = ((x - left) / pw * 64) | 0; if (t < 0) t = 0; if (t > 63) t = 63;
+      ctx.drawImage(img, t, 0, 1, 64, x, top, 1, ph);
+    }
+  }
+  ctx.restore();
+
+  if (S.mode !== 'attract') {
+    drawWeapon();
+    R('rgba(244,239,228,.85)', W / 2 - 1, H / 2 - 4, 2, 2); R('rgba(244,239,228,.85)', W / 2 - 1, H / 2 + 2, 2, 2);
+    R('rgba(244,239,228,.85)', W / 2 - 4, H / 2 - 1, 2, 2); R('rgba(244,239,228,.85)', W / 2 + 2, H / 2 - 1, 2, 2);
+    if (showMap) drawMinimap();
+    if (S.hurtFlash > 0) {
+      const g = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, 200);
+      g.addColorStop(0, 'rgba(212,42,48,0)'); g.addColorStop(1, `rgba(212,42,48,${(S.hurtFlash * .9).toFixed(2)})`);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+  }
+}
+
+function drawWeapon() {
+  const bx = Math.sin(S.bob) * 4, by = Math.abs(Math.cos(S.bob)) * 3 - 14;
+  const k = S.anim > 0 ? 1 - S.anim / S.animDur : 0, sw = Math.sin(k * Math.PI);
+  const MIT = '#b51c22', CUFF = '#e9e4d8';
+  ctx.save();
+  if (S.weapon === 0) {
+    ctx.translate(236 + bx - sw * 80, 214 + by - sw * 14);
+    ctx.rotate(-.42 - sw * 1.3);
+    if (S.stickHits > 0) {
+      R('#c8964f', -3, -150, 7, 150); R('#a8773a', 2, -150, 2, 150);
+      R('#1b1b1f', -3, -12, 7, 12);
+      R('#1b1b1f', -36, -158, 40, 10); R('#e9e4d8', -32, -154, 30, 1); R('#2e2e35', -36, -150, 40, 2);
+      if (S.stickHits <= 10) { R('#3a2410', 0, -124, 2, 9); R('#3a2410', 2, -116, 2, 7); }
+    } else {
+      R('#c8964f', -3, -105, 7, 105); R('#a8773a', 2, -105, 2, 105); R('#1b1b1f', -3, -12, 7, 12);
+      R('#c8964f', -3, -112, 3, 7); R('#c8964f', 1, -109, 3, 4); R('#e9d3a6', -3, -106, 7, 1);
+    }
+    R(MIT, -9, -48, 18, 18); R(CUFF, -9, -32, 18, 6);
+    R(MIT, -8, -100, 16, 15); R(CUFF, -8, -87, 16, 4);
+  } else if (S.weapon === 1) {
+    const skate = (x, y, flip, lift) => {
+      ctx.save(); ctx.translate(x, y - lift); ctx.scale(flip ? -1 : 1, 1);
+      R(S.sharp > .5 ? '#dfe5ea' : S.sharp > .3 ? '#b5bcc3' : '#858d94', -28, -50, 54, 3); R('#9aa3ab', -28, -47, 54, 1);
+      R('#f0f0f0', -20, -46, 7, 6); R('#f0f0f0', 12, -46, 7, 6); R('#f0f0f0', -20, -41, 39, 3);
+      R('#202027', -24, -38, 46, 16); R('#202027', 16, -36, 9, 12); R('#3a3a45', -24, -38, 46, 2);
+      R('#202027', -18, -22, 24, 22);
+      for (let i = 0; i < 4; i++) { R(CUFF, -14, -20 + i * 5, 14, 1); }
+      R(MIT, -22, -2, 30, 22); R(CUFF, -22, 16, 30, 7);
+      ctx.restore();
+    };
+    skate(84 + bx + (S.side === 0 ? sw * 50 : 0), 210 + by, true, S.side === 0 ? sw * 34 : 0);
+    skate(236 + bx - (S.side === 1 ? sw * 50 : 0), 210 + by, false, S.side === 1 ? sw * 34 : 0);
+  } else {
+    const thrown = S.anim > 0 ? k : 0;
+    ctx.translate(234 + bx - thrown * 50, 196 + by - thrown * 100);
+    const sc = 1 - thrown * .5; ctx.scale(sc, sc);
+    const showBottle = (S.anim > 0 && k < .55) || (S.anim <= 0 && S.ammo > 0);
+    if (showBottle) {
+      R('#7a3f0d', -9, -62, 18, 46); R('#a8641f', -6, -60, 3, 42);
+      R('#efe2c0', -9, -46, 18, 16); leaf(ctx, 0, -38, 5, '#cf2027');
+      R('#7a3f0d', -4, -78, 8, 16); R('#e8e0d0', -5, -82, 10, 6); R('#d8cdb8', 3, -78, 3, 11);
+      const f = Math.sin(S.t * 30);
+      R('#e2561a', -6, -95 - f * 2, 12, 14); R('#f28c1d', -4, -93 - f * 2, 8, 11); R('#ffe27a', -2, -89 - f, 4, 7);
+    }
+    R(MIT, -15, -26, 30, 24); R(CUFF, -15, -4, 30, 9);
+  }
+  ctx.restore();
+}
+
+function drawMinimap() {
+  const s = 2, ox = W - MW * s - 4, oy = 4;
+  ctx.globalAlpha = .75;
+  R('rgba(5,7,13,.8)', ox - 2, oy - 2, MW * s + 4, MH * s + 4);
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+    const ch = map[y * MW + x]; if (ch === '.') continue;
+    R(ch === 'B' ? '#c9d2d8' : ch === 'W' ? '#8a5a2e' : ch === 'M' ? '#7a5030' : '#7a3a2c', ox + x * s, oy + y * s, s, s);
+  }
+  for (const p of S.pickups) if (p.active) R(({ poutine: '#f2c14e', lager: '#e2a33a', stick: '#c8964f', skates: '#ffffff' })[p.type], ox + p.x * s - 1, oy + p.y * s - 1, 2, 2);
+  for (const f of S.fires) R('#f28c1d', ox + f.x * s - 1, oy + f.y * s - 1, 3, 3);
+  for (const z of S.zombies) if (!z.dead) R('#ff3b3b', ox + z.x * s - 1, oy + z.y * s - 1, z.boss ? 4 : 2, z.boss ? 4 : 2);
+  R('#9cc7dc', ox + P.x * s - 1.5, oy + P.y * s - 1.5, 3, 3);
+  ctx.strokeStyle = '#9cc7dc'; ctx.lineWidth = 1; ctx.beginPath();
+  ctx.moveTo(ox + P.x * s, oy + P.y * s); ctx.lineTo(ox + (P.x + Math.cos(S.ang) * 2) * s, oy + (P.y + Math.sin(S.ang) * 2) * s); ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+/* ---------- HUD ---------- */
+const hud = { hp: $('hpVal'), bar: $('hpBar'), cell: $('hpCell'), ammo: $('ammoVal'), wave: $('waveVal'), kills: $('killVal'), slots: [...$('slots').children] };
+let last = {};
+function updateHUD() {
+  const hp = Math.ceil(S.hp);
+  if (last.hp !== hp) { hud.hp.textContent = hp; hud.bar.style.width = hp + '%'; hud.cell.classList.toggle('low', hp <= 30); last.hp = hp; }
+  if (last.ammo !== S.ammo) { hud.ammo.textContent = S.ammo; last.ammo = S.ammo; }
+  if (last.wave !== S.wave) { hud.wave.textContent = S.wave; last.wave = S.wave; }
+  if (last.kills !== S.kills) { hud.kills.textContent = S.kills; last.kills = S.kills; }
+  const st = S.stickHits > 0 ? `B Stick ${S.stickHits}` : 'B Snapped';
+  const sk = `N Skates ${Math.round(S.sharp * 100)}%`;
+  if (last.st !== st) { hud.slots[0].textContent = st; last.st = st; }
+  if (last.sk !== sk) { hud.slots[1].textContent = sk; last.sk = sk; }
+  if (last.w !== S.weapon) { hud.slots.forEach((b, i) => b.classList.toggle('on', i === S.weapon)); last.w = S.weapon; }
+}
+
+/* ---------- loop ---------- */
+attract();
+let lt = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - lt) / 1000); lt = now;
+  if (!paused) update(dt);
+  render(); updateHUD();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

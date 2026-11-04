@@ -17,6 +17,7 @@ tracker (see below), and it stays off until you add a code.
 | `resume.pdf` | The résumé the site serves. Replace this file to update it. |
 | `.nojekyll` | Tells Pages to serve the files as-is, no Jekyll processing. |
 | `mileage-log/` | The Mileage Log app (its own README covers it). |
+| `aye-buddy/` | Aye Buddy, the Doom-style browser game. One self-contained `index.html`. |
 
 ## Visit stats
 
