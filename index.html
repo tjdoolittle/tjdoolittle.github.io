@@ -105,6 +105,38 @@ try {
         </div>
       </li>
 
+      <!-- C4 Site Sheet (repo: tjdoolittle/control-4-application, served on its own Pages site) -->
+      <li class="card">
+        <figure class="card-visual">
+          <img src="assets/c4-site-sheet.png" alt="Schematic drawn from a Control4 project backup: cable box, Blu-ray, Kaleidescape and TiVos feeding a Marantz receiver and a MoIP video matrix, with IR emitters from an IO Extender and HDMI runs to labeled TV inputs." loading="lazy">
+          <figcaption class="visual-caption">Open a Control4 project backup and every device, port and wire is drawn for you.</figcaption>
+        </figure>
+        <div class="card-head">
+          <h3 class="card-title">C4 Site Sheet</h3>
+          <span class="chip chip-live">Live</span>
+        </div>
+        <p class="card-body">
+          Turns a Control4 Composer backup (<code>.c4p</code>) into the as-built. It reads the
+          project file and every bundled driver, then draws a signal-flow schematic with the real
+          port names, lists each device by room with its IP, MAC and firmware, maps every IR and
+          serial run, and flags gear that was offline or never bound. Add blocks for what Composer
+          doesn't know about, like the network switch, and wire them in. Backups are parsed in the
+          browser and never uploaded. Also ships as a 2.7&nbsp;MB Windows app that works offline.
+        </p>
+        <ul class="tags">
+          <li>JavaScript</li>
+          <li>SVG</li>
+          <li>XML parsing</li>
+          <li>Neutralinojs</li>
+          <li>Control4</li>
+        </ul>
+        <div class="card-links">
+          <a class="link-primary" href="https://tjdoolittle.github.io/control-4-application/app/">Open app</a>
+          <a href="https://tjdoolittle.github.io/control-4-application/">Overview</a>
+          <a href="https://tjdoolittle.github.io/control-4-application/downloads/C4SiteSheet-win_x64.exe">Download for Windows</a>
+        </div>
+      </li>
+
       <!-- Home Schematic Designer -->
       <li class="card">
         <figure class="card-visual">
