@@ -92,7 +92,8 @@ try {
           Turns a Control4 Composer backup (<code>.c4p</code>) into the as-built. It reads the
           project file and every bundled driver, then draws a signal-flow schematic with the real
           port names, lists each device by room with its IP, MAC and firmware, maps every IR and
-          serial run, and flags gear that was offline or never bound. Open two backups of the same
+          serial run, reads the programming and lighting scenes, and flags gear that was offline
+          or never bound. Open two backups of the same
           job to see exactly what changed between visits, and print a closeout packet for the
           client. Add blocks for what Composer
           doesn't know about, like the network switch, and wire them in. Backups are parsed in the
