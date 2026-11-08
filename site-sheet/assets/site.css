@@ -14,6 +14,7 @@
   --band: #0f2236;
   --band-ink: #dfe9f3;
   --band-ink-2: #9db3c8;
+  --mat: #f3f5f7;
   --font-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
@@ -85,6 +86,7 @@ p { margin: 0; }
 .hero-text h1 span { display: block; white-space: nowrap; }
 .lede { margin-top: 22px; max-width: 62ch; font-size: 19px; color: var(--ink-2); }
 .window { margin: 56px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: 0 24px 60px -24px rgba(8, 22, 38, .45); }
+.hero-shot img { background: var(--mat); padding: clamp(10px, 2.2vw, 28px); }
 .window-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: var(--surface-2); border-bottom: 1px solid var(--line); font-size: 13px; }
 .window-bar span { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
 .window-bar b { margin-left: 10px; font-weight: 500; color: var(--ink-3); font-family: var(--font-mono); font-size: 12px; }
@@ -107,12 +109,12 @@ p { margin: 0; }
 .ticks li { padding-left: 24px; position: relative; }
 .ticks li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 12px; height: 3px; border-radius: 2px; background: var(--accent); }
 .shot { margin: 0; min-width: 0; }
-.shot img, .tile img { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: 0 14px 40px -22px rgba(8, 22, 38, .4); }
+.shot img, .tile img { border: 1px solid var(--line); border-radius: 8px; background: var(--mat); padding: clamp(10px, 2.2vw, 24px); box-shadow: 0 14px 40px -22px rgba(8, 22, 38, .4); }
 figcaption { margin-top: 12px; font-size: 14px; color: var(--ink-3); }
 
 .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding-block: 96px 0; align-items: start; }
 .tile { margin: 0; min-width: 0; }
-.tile img { aspect-ratio: 16 / 11; object-fit: cover; object-position: top left; width: 100%; }
+.tile img { aspect-ratio: 16 / 11; object-fit: cover; object-position: top left; width: 100%; padding: clamp(10px, 1.6vw, 18px); }
 .tile figcaption { font-size: 15px; color: var(--ink-2); }
 .tile figcaption b { color: var(--ink); }
 
