@@ -25,11 +25,11 @@
     <nav class="nav-links" aria-label="Page">
       <a href="#schematic">Schematic</a>
       <a href="#programming">Programming</a>
-      <a href="#compare">Compare</a>
-      <a href="#inventory">Inventory</a>
+      <a href="#fleet">Fleet</a>
+      <a href="#network">OvrC</a>
+      <a href="#labels">Labels</a>
       <a href="#closeout">Closeout</a>
       <a href="#download">Download</a>
-      <a href="https://github.com/tjdoolittle/control-4-application">GitHub</a>
     </nav>
   </div>
 </header>
@@ -39,10 +39,10 @@
     <div class="wrap hero-text">
       <p class="eyebrow">For Control4 dealers and programmers</p>
       <h1><span>Open a project backup.</span> <span>Get the as-built.</span></h1>
-      <p class="lede">Site Sheet reads a Composer <span class="mono">.c4p</span> file and lays out every device, port and wire in the system: a signal-flow schematic, an inventory by room, the IR and serial map, the network sheet, the programming, a list of what's broken, and a closeout packet ready to print.</p>
+      <p class="lede">Site Sheet reads a Composer <span class="mono">.c4p</span> file and lays out every device, port and wire in the system: a signal-flow schematic, an inventory by room, the programming, what's broken and what's due for an upgrade, the network merged with OvrC, cable labels, and a closeout packet ready to print. Then it puts every client system in one table.</p>
       <div class="cta">
         <a class="btn btn-primary" href="app/">Open the web app</a>
-        <a class="btn" href="downloads/SiteSheet-win_x64.exe" download>Download for Windows <span class="btn-note">2.7 MB</span></a>
+        <a class="btn" href="downloads/SiteSheet-win_x64.exe" download>Download for Windows <span class="btn-note">3 MB</span></a>
       </div>
       <p class="fine">Free. Backups are read on your computer and never uploaded.</p>
     </div>
@@ -57,7 +57,7 @@
 
   <section class="facts wrap" aria-label="What it reads">
     <div class="fact"><span class="fact-k">Reads</span><span class="fact-v">project.xml, every bundled <span class="mono">.c4i</span> and <span class="mono">.c4z</span> driver, and the backup manifest</span></div>
-    <div class="fact"><span class="fact-k">Tested on</span><span class="fact-v">Director OS 3.4 and 4.2 projects, from a single media room to a whole-house MoIP system</span></div>
+    <div class="fact"><span class="fact-k">Tested on</span><span class="fact-v">OS 3.4 and 4.2 jobs from 5 to 123 devices, with the programming checked line by line against Composer's own printouts</span></div>
     <div class="fact"><span class="fact-k">Speed</span><span class="fact-v">Under a second for a 30 MB backup</span></div>
   </section>
 
@@ -92,24 +92,24 @@
     </figure>
   </section>
 
-  <section id="programming" class="feature feature-flip wrap">
+  <section id="programming" class="feature wrap">
     <div class="feature-text">
       <p class="eyebrow">Programming</p>
       <h2>What every button and event does</h2>
       <p>The <b>Programming</b> tab reads the project's programming without opening Composer: each event and the lines it runs, nested conditionals included, plus lighting scenes with levels and ramp times, keypad buttons with their behaviors and LED colors, timers, custom buttons and variables.</p>
       <ul class="ticks">
+        <li>Reads the way Composer prints it: <i>When Left KP Button 5 button is pushed</i>, <i>When command 'Red Button' is received</i>, checked line by line against Composer's own printouts</li>
+        <li>Keypad buttons, dimmer taps, remote and room commands, timers and scheduled events all named, not left as event numbers</li>
         <li>Pick a device to see every event and scene that touches it</li>
-        <li>Device and scene names fill in where Composer stores only an ID</li>
-        <li>Room events have no names in a backup: name one once and it reads that way in every project</li>
       </ul>
     </div>
     <figure class="shot">
       <img src="assets/screenshots/programming.webp" width="1600" height="1500" loading="lazy" alt="Programming tab: events grouped by room with the actions each one runs, such as activating the Play Movie lighting scene, and the two lighting scenes with their levels and ramp times.">
-      <figcaption>A media room's events, scenes and custom buttons, read straight from its backup.</figcaption>
+      <figcaption>A media room's remote commands, room events and lighting scenes, read straight from its backup.</figcaption>
     </figure>
   </section>
 
-  <section id="compare" class="feature wrap">
+  <section id="compare" class="feature feature-flip wrap">
     <div class="feature-text">
       <p class="eyebrow">Compare</p>
       <h2>What changed since the last visit</h2>
@@ -121,33 +121,92 @@
       </ul>
     </div>
     <figure class="shot">
-      <img src="assets/screenshots/changes.webp" width="1600" height="1303" loading="lazy" alt="Changes between two backups of one project: one device added, one removed, a renamed Blu-ray, a controller whose IP moved, and an IR output rebound from the cable box to the Kaleidescape.">
-      <figcaption>Two backups of one job, six months apart. Example changes, names altered.</figcaption>
+      <img src="assets/screenshots/changes.webp" width="1600" height="1000" loading="lazy" alt="Changes between two backups of one project six months apart: one device added, one removed, two changed, an address change and two wiring changes.">
+      <figcaption>Two backups of one job, six months apart. Names changed for privacy.</figcaption>
     </figure>
   </section>
 
-  <section id="inventory" class="feature feature-flip wrap">
+  <section id="fleet" class="feature wrap">
+    <div class="feature-text">
+      <p class="eyebrow">Fleet report</p>
+      <h2>Every client system in one table</h2>
+      <p>Drop in every backup you have, or pick the folder that holds your job folders, and the <b>Fleet report</b> gives you one row per system: OS and how far behind it is, controllers, end-of-life hardware, legacy drivers, open issues and backup age.</p>
+      <ul class="ticks">
+        <li>Sorted by what needs attention first, with filters for OS behind, end-of-life gear, legacy drivers and stale backups</li>
+        <li>OvrC lists dropped in with the backups are matched to their system by MAC address</li>
+        <li>Each backup is summarized and let go, so hundreds of systems fit. Download the table as CSV</li>
+      </ul>
+    </div>
+    <figure class="shot">
+      <img src="assets/screenshots/fleet.webp" width="1800" height="1125" loading="lazy" alt="Fleet report with four systems: totals for systems on OS 3, X4 systems behind, systems with end-of-life gear, legacy drivers and open issues, and a sortable table with each system's OS, controllers, upgrade items, issues and device count.">
+      <figcaption>Four systems, sorted by priority. The one with 13 open issues comes first.</figcaption>
+    </figure>
+  </section>
+
+  <section id="upgrades" class="feature feature-flip wrap">
+    <div class="feature-text">
+      <p class="eyebrow">Upgrades</p>
+      <h2>What's out of date, and what replaces it</h2>
+      <p>Every project opens with an <b>upgrade review</b>: how many releases the OS is behind and the steps to the current X4, controllers past end of life or discontinued with the CORE that replaces each, hardware the next OS drops (T3 touch screens, Gen 1 and Gen 2 lighting), and drivers their makers mark as legacy.</p>
+      <ul class="ticks">
+        <li>Hardware that holds back an upgrade is called out before you quote the OS update</li>
+        <li><b>Copy upgrade list</b> pastes straight into a quote or service ticket</li>
+        <li>An optional <i>Upgrade recommendations</i> page for the client's closeout packet</li>
+      </ul>
+    </div>
+    <figure class="shot">
+      <img src="assets/screenshots/upgrades.webp" width="1800" height="1125" loading="lazy" alt="Upgrade review for an OS 3.4.3 system: five releases behind X4 4.3, two discontinued EA controllers with the CORE 3 and CORE 1 that replace them, and a MoIP driver marked legacy.">
+      <figcaption>An OS 3 system with two EA controllers and a legacy MoIP driver.</figcaption>
+    </figure>
+  </section>
+
+  <section id="network" class="feature wrap">
+    <div class="feature-text">
+      <p class="eyebrow">OvrC and the router</p>
+      <h2>Merge OvrC without listing anything twice</h2>
+      <p>Click <b>Add OvrC list</b> on any project and drop in the site's OvrC device export. Devices are matched by MAC, then by IP, each only once: Composer devices pick up their live status and addresses, the switches and access points Composer doesn't know about are added, and anything that could be two devices waits for you to decide.</p>
+      <ul class="ticks">
+        <li>Phones and laptops stay out unless you ask for them</li>
+        <li>A <b>DHCP reservation list</b> of every IP and MAC pair, with conflicts flagged, ready for the router</li>
+        <li>Export as a table to type in, CSV, or config for dnsmasq, pfSense or MikroTik</li>
+      </ul>
+    </div>
+    <figure class="shot">
+      <img src="assets/screenshots/network.webp" width="1800" height="1125" loading="lazy" alt="Network tab with an OvrC list merged: 69 OvrC devices, 21 matched to Control4 devices (9 by MAC, 12 by IP), 39 added as network devices, and 3 that need a decision with a choice for each.">
+      <figcaption>69 OvrC devices: 21 matched, 39 added, 3 waiting on a decision.</figcaption>
+    </figure>
+  </section>
+
+  <section id="labels" class="feature feature-flip wrap">
+    <div class="feature-text">
+      <p class="eyebrow">Labels</p>
+      <h2>Cable labels and a QR code for the rack</h2>
+      <p>The <b>Labels</b> tab numbers every cable, from Composer and from the wires you drew, and prints labels for both ends on Avery 5160 or 5167 sheets, or sends a CSV to a Brother or DYMO label printer.</p>
+      <p>It also prints a <b>QR sticker</b> for the inside of the rack. Scanning it opens the system's controllers, network gear and IP devices by room on any phone, with tap-to-open addresses and your phone number. There's no app, no account and no database: the list rides inside the QR code itself, and an optional PIN encrypts it.</p>
+    </div>
+    <figure class="shot">
+      <img src="assets/screenshots/labels.webp" width="1800" height="1125" loading="lazy" alt="Labels tab: a rack sticker QR code with 34 of 63 devices fitting on a 2 inch sticker, the installer's name and phone, and the cable list numbered W01 to W23 with a preview of the Avery label sheet.">
+      <figcaption>A 2 inch rack sticker and 23 cables ready to print.</figcaption>
+    </figure>
+  </section>
+
+  <section id="inventory" class="feature wrap">
     <div class="feature-text">
       <p class="eyebrow">Inventory</p>
       <h2>Every device, room by room</h2>
       <p>Make, model, control method, IP or Zigbee ID, MAC, firmware and driver version for each piece of hardware, grouped by floor and room. Dimmers show their load name, so you see <i>Hall Pendants</i> instead of a row of identical <i>Adaptive Phase Dimmer</i>.</p>
       <p>Search by anything (an IP, a MAC, a model number) and filter by category or control type. Export to CSV for Excel or Google Sheets.</p>
-      <p>Every service call starts with an <b>upgrade review</b>: how far the OS is behind, controllers past end of life with the CORE that replaces each, hardware the next OS drops, and drivers marked legacy. Copy it straight into a quote.</p>
-      <p>Add the site's <b>OvrC device list</b> and it merges in without doubling anything up: devices are matched by MAC, then by IP, each only once. Composer devices pick up their live status and addresses, the switches and access points Composer doesn't know about are added, and anything ambiguous waits for you to decide.</p>
-      <p>The <b>fleet report</b> takes every backup you have, or a whole folder of job folders, and gives you one table across all your clients: OS and how far behind it is, controllers, end-of-life gear, legacy drivers and open issues, sorted by what needs attention first.</p>
-      <p>Print <b>cable labels</b> for every wire on Avery sheets or a label printer, and a <b>QR sticker</b> for the rack that opens the system's devices and addresses on any phone. No app and no account: the data rides in the QR code itself.</p>
-      <p>The <b>DHCP reservation list</b> pulls every IP and MAC pair from Composer and OvrC, flags conflicts, and exports it for the router: a table to type in, CSV, or a config for dnsmasq, pfSense or MikroTik.</p>
     </div>
     <figure class="shot">
       <img src="assets/screenshots/devices.webp" width="1800" height="1125" loading="lazy" alt="Device inventory grouped by room, with columns for device, make and model, control type badge, address, MAC and version, and summary counts across the top.">
     </figure>
   </section>
 
-  <section id="closeout" class="feature wrap">
+  <section id="closeout" class="feature feature-flip wrap">
     <div class="feature-text">
       <p class="eyebrow">Closeout</p>
       <h2>A finished as-built to hand the client</h2>
-      <p>The <b>Closeout</b> tab builds a print-ready packet from the project: a cover with your company, logo and service contact, a system overview with your notes, the schematic on its own landscape page, then inventory by room, wiring, network, open issues, changes since the last backup, and a sign-off page.</p>
+      <p>The <b>Closeout</b> tab builds a print-ready packet from the project: a cover with your company, logo and service contact, a system overview with your notes, the schematic on its own landscape page, then inventory by room, wiring, network, programming, open issues, upgrade recommendations, changes since the last backup, and a sign-off page.</p>
       <ul class="ticks">
         <li>Pick which sections to include. US Letter or A4</li>
         <li>The schematic prints with the layout you arranged and the wires you added</li>
@@ -166,12 +225,12 @@
       <figcaption><b>Wiring list.</b> Every IR emitter and serial run by port, and every source output with the input it feeds. The page to print for a service call.</figcaption>
     </figure>
     <figure class="tile">
-      <img src="assets/screenshots/network.webp" width="1800" height="1125" loading="lazy" alt="Network sheet listing IP devices in address order with MAC, model and status.">
-      <figcaption><b>Network sheet.</b> IP devices in address order with MACs and status, every Zigbee ID, and IP drivers that were never given an address.</figcaption>
+      <img src="assets/screenshots/dhcp.webp" width="1800" height="1125" loading="lazy" alt="DHCP reservation list: 37 devices sorted by IP address with MAC, host name, device, room and whether the pair came from Composer, OvrC or both.">
+      <figcaption><b>DHCP reservations.</b> Every IP and MAC pair from Composer and OvrC, sorted by address, with conflicts and randomized MACs set aside.</figcaption>
     </figure>
     <figure class="tile">
-      <img src="assets/screenshots/attention.webp" width="1600" height="622" loading="lazy" alt="Attention list showing two devices reported offline and one IP driver with no address set.">
-      <figcaption><b>Attention list.</b> Devices offline when the backup was taken, duplicate IPs, and IR or serial drivers with no port bound.</figcaption>
+      <img src="assets/screenshots/label-sheet.webp" width="1600" height="869" loading="lazy" alt="A printed sheet of cable labels: each shows the cable number and type, the device and port it starts at, and the device and port it runs to.">
+      <figcaption><b>Cable labels.</b> One for each end: the cable number, where it starts and where it runs, printed to scale on Avery sheets.</figcaption>
     </figure>
   </section>
 
@@ -180,7 +239,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.4 3 8.3 7 9.5 4-1.2 7-5.1 7-9.5V6l-7-3z"/><path d="m9 12 2 2 4-4"/></svg>
       <div>
         <h2>Client files stay on your computer</h2>
-        <p>The backup is opened and parsed inside your browser or the desktop app. Nothing is uploaded, there's no account, and no server ever sees a client's name, address or network. To move a job between computers or hand it to another tech, save it as a project file: one file on your computer with your layout, OvrC matches and notes, and an optional password that encrypts all of it.</p>
+        <p>The backup is opened and parsed inside your browser or the desktop app. Nothing is uploaded, there's no account, and no server ever sees a client's name, address or network. To move a job between computers or hand it to another tech, save it as a project file: one file on your computer with your layout, OvrC matches and notes, and an optional password that encrypts all of it. Even the rack sticker carries its list inside the QR code, not on a server.</p>
       </div>
     </div>
   </section>
@@ -188,7 +247,7 @@
   <section id="download" class="download wrap">
     <div class="download-text">
       <p class="eyebrow">Download</p>
-      <h2>A 2.7 MB Windows app that works offline</h2>
+      <h2>A 3 MB Windows app that works offline</h2>
       <p>One portable file, no installer. It uses the WebView2 engine built into Windows 10 and 11, saves exports through a normal Save dialog, and runs in the truck with no signal.</p>
       <div class="cta">
         <a class="btn btn-primary" href="downloads/SiteSheet-win_x64.exe" download>Download SiteSheet.exe</a>
@@ -198,11 +257,11 @@
     </div>
     <ol class="steps">
       <li><span class="n">1</span><div><b>Back up the project</b><span>In Composer Pro: File → Backup Project. Save the <span class="mono">.c4p</span>.</span></div></li>
-      <li><span class="n">2</span><div><b>Open it in Site Sheet</b><span>Drop one or several backups on the window. Each becomes a project in the list.</span></div></li>
-      <li><span class="n">3</span><div><b>Take the as-built with you</b><span>Export the inventory as CSV and the schematic as SVG, or keep the app on your phone at the rack.</span></div></li>
+      <li><span class="n">2</span><div><b>Open it in Site Sheet</b><span>Drop one or several backups on the window, with the site's OvrC device list if you have it. Each becomes a project in the list.</span></div></li>
+      <li><span class="n">3</span><div><b>Leave the as-built at the rack</b><span>Print the closeout packet, label the cables, and stick the QR code inside the rack so the next tech has it on their phone.</span></div></li>
     </ol>
     <figure class="phone">
-      <img src="assets/screenshots/mobile.webp" width="700" height="1515" loading="lazy" alt="The device inventory on a phone screen.">
+      <img src="assets/screenshots/rack-phone.webp" width="700" height="1515" loading="lazy" alt="The rack card a phone opens from the QR sticker: the system name, OS, the installer with a Call button, a search box, and devices grouped by room with their IP addresses.">
     </figure>
   </section>
 </main>
