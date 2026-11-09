@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.min.css?v=f361bf6d76">
+<link rel="stylesheet" href="style.min.css?v=1f85d4863a">
 </head>
 <body>
 <header class="topbar">
@@ -28,12 +28,18 @@
       <input id="file-input" type="file" accept=".c4p,.csv,.sitesheet,application/zip,text/csv" multiple hidden>
       <input id="compare-input" type="file" accept=".c4p,application/zip" hidden>
       <input id="ovrc-input" type="file" accept=".csv,text/csv" hidden>
+      <input id="fleet-input" type="file" accept=".c4p,application/zip" multiple hidden>
+      <input id="fleet-folder" type="file" webkitdirectory multiple hidden>
     </div>
   </div>
 </header>
 
 <div class="layout">
   <aside class="sidebar" aria-label="Loaded projects">
+    <button class="fleet-entry" id="fleet-entry" type="button">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="3.2" rx=".6"/><rect x="2.5" y="8.4" width="15" height="3.2" rx=".6"/><rect x="2.5" y="13.8" width="15" height="3.2" rx=".6"/></svg>
+      <span><b>Fleet report</b><span id="fleet-count">All your systems in one table</span></span>
+    </button>
     <div class="sidebar-head">
       <span class="eyebrow">Projects</span>
       <span class="count" id="project-count">0</span>
@@ -61,6 +67,6 @@
 <dialog id="ss-dialog" class="ss-dialog" aria-label="Site Sheet"></dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="app.min.js?v=f361bf6d76"></script>
+<script src="app.min.js?v=1f85d4863a"></script>
 </body>
 </html>
