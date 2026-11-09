@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.min.css?v=913f25519d">
+<link rel="stylesheet" href="style.min.css?v=e0e5cd409b">
 </head>
 <body>
 <header class="topbar">
@@ -23,9 +23,9 @@
     <div class="topbar-actions">
       <label class="btn btn-primary" for="file-input">
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 16h12"/></svg>
-        Open .c4p files
+        Open files
       </label>
-      <input id="file-input" type="file" accept=".c4p,.csv,application/zip,text/csv" multiple hidden>
+      <input id="file-input" type="file" accept=".c4p,.csv,.sitesheet,application/zip,text/csv" multiple hidden>
       <input id="compare-input" type="file" accept=".c4p,application/zip" hidden>
       <input id="ovrc-input" type="file" accept=".csv,text/csv" hidden>
     </div>
@@ -42,7 +42,7 @@
     <div class="sidebar-head sample-head"><span class="eyebrow">Samples</span></div>
     <ul class="project-list sample-list" id="sample-list"></ul>
     <div class="dropzone" id="dropzone">
-      <p><strong>Drop .c4p backups here</strong></p>
+      <p><strong>Drop .c4p backups or project files here</strong></p>
       <p class="muted">Export from Composer Pro: File → Backup Project. Files are read in this browser and never uploaded.</p>
     </div>
   </aside>
@@ -58,8 +58,9 @@
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="ss-dialog" class="ss-dialog" aria-label="Site Sheet"></dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="app.min.js?v=913f25519d"></script>
+<script src="app.min.js?v=e0e5cd409b"></script>
 </body>
 </html>
