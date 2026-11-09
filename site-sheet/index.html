@@ -134,6 +134,7 @@
       <p>Search by anything (an IP, a MAC, a model number) and filter by category or control type. Export to CSV for Excel or Google Sheets.</p>
       <p>Every service call starts with an <b>upgrade review</b>: how far the OS is behind, controllers past end of life with the CORE that replaces each, hardware the next OS drops, and drivers marked legacy. Copy it straight into a quote.</p>
       <p>Add the site's <b>OvrC device list</b> and it merges in without doubling anything up: devices are matched by MAC, then by IP, each only once. Composer devices pick up their live status and addresses, the switches and access points Composer doesn't know about are added, and anything ambiguous waits for you to decide.</p>
+      <p>The <b>DHCP reservation list</b> pulls every IP and MAC pair from Composer and OvrC, flags conflicts, and exports it for the router: a table to type in, CSV, or a config for dnsmasq, pfSense or MikroTik.</p>
     </div>
     <figure class="shot">
       <img src="assets/screenshots/devices.webp" width="1800" height="1125" loading="lazy" alt="Device inventory grouped by room, with columns for device, make and model, control type badge, address, MAC and version, and summary counts across the top.">
