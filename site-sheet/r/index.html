@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Rack Card · Site Sheet</title>
+<style>
+:root {
+  --bg: #f3f5f7; --surface: #fff; --surface-2: #eaeef2; --ink: #16212c; --ink-2: #4a5966; --ink-3: #6f7d89; --line: #d7dee5;
+  --accent: #1667b7; --accent-ink: #fff; --accent-soft: #e2edf8; --bad: #b3261e; --bad-soft: #fbe4e2;
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0f151b; --surface: #161e26; --surface-2: #1d2731; --ink: #e5ebf0; --ink-2: #a8b5c0; --ink-3: #8593a0; --line: #2a3642; --accent: #5aa6f0; --accent-ink: #08121c; --accent-soft: #15283b; --bad: #f08b84; --bad-soft: #3a1d1b; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0f151b; --surface: #161e26; --surface-2: #1d2731; --ink: #e5ebf0; --ink-2: #a8b5c0; --ink-3: #8593a0; --line: #2a3642; --accent: #5aa6f0; --accent-ink: #08121c; --accent-soft: #15283b; --bad: #f08b84; --bad-soft: #3a1d1b; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+main { max-width: 720px; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 40px max(16px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 14px; }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.brand svg { width: 18px; height: 18px; fill: none; stroke: var(--accent); stroke-width: 1.6; }
+h1 { font-size: clamp(26px, 7vw, 34px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--ink-2); }
+.facts b { font-weight: 600; color: var(--ink-3); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin-right: 5px; }
+.dealer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.dealer .k { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.dealer .v { font-weight: 600; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 600 15px var(--font); text-decoration: none; cursor: pointer; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+input { width: 100%; min-height: 46px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 16px var(--font); }
+input:focus-visible, .btn:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.room { display: flex; flex-direction: column; gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.room h2 { margin: 0; padding: 9px 14px; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); background: var(--surface-2); }
+.dev { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 11px 14px; border-top: 1px solid var(--line); }
+.room h2 + .dev { border-top: 0; }
+.dev .n { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.dev .m { grid-column: 1; font-size: 13.5px; color: var(--ink-2); }
+.dev .ip { grid-row: 1; grid-column: 2; font: 15px var(--mono); color: var(--accent); text-decoration: none; white-space: nowrap; align-self: start; }
+.dev .mac { grid-column: 1 / -1; font: 12.5px var(--mono); color: var(--ink-3); }
+.note { font-size: 13.5px; color: var(--ink-3); }
+.lock { display: flex; flex-direction: column; gap: 10px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.err { color: var(--bad); font-size: 14.5px; }
+.panel-err { padding: 16px; border-radius: 10px; background: var(--bad-soft); }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="3.2" rx=".6"/><rect x="2.5" y="8.4" width="15" height="3.2" rx=".6"/><rect x="2.5" y="13.8" width="15" height="3.2" rx=".6"/></svg>Rack card</div>
+  <div id="view" aria-live="polite" style="display:flex;flex-direction:column;gap:14px"><p class="note">Opening…</p></div>
+</main>
+<script src="rackcode.min.js?v=9e31aca328"></script>
+<script>
+(function () {
+  'use strict';
+  const view = document.getElementById('view');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const frag = location.hash.slice(1);
+
+  function contactLink(v) {
+    const digits = v.replace(/[^\d+]/g, '');
+    if (/@/.test(v)) return `<a class="btn" href="mailto:${esc(v.trim())}">Email</a>`;
+    if (digits.length >= 7) return `<a class="btn btn-primary" href="tel:${esc(digits)}">Call</a>`;
+    return '';
+  }
+
+  function show(p) {
+    const rows = C4Rack.rows(p);
+    const rooms = [];
+    rows.forEach(r => { let g = rooms.find(x => x.name === r.room); if (!g) rooms.push(g = { name: r.room, list: [] }); g.list.push(r); });
+    document.title = (p.n || 'Rack card') + ' · Site Sheet';
+    const dealer = p.c && (p.c[0] || p.c[1]);
+    view.innerHTML = `
+      <h1>${esc(p.n || 'Control4 system')}</h1>
+      <div class="facts">${p.o ? `<span><b>OS</b>${esc(p.o)}</span>` : ''}${p.d ? `<span><b>As of</b>${esc(p.d)}</span>` : ''}<span><b>Devices</b>${rows.length}${p.m ? ` of ${rows.length + p.m}` : ''}</span></div>
+      ${dealer ? `<div class="dealer"><div><div class="k">Installed and serviced by</div><div class="v">${esc(p.c[0])}</div>${p.c[1] ? `<div>${esc(p.c[1])}</div>` : ''}</div>${p.c[1] ? contactLink(p.c[1]) : ''}</div>` : ''}
+      ${rows.length > 6 ? '<input id="q" type="search" placeholder="Find a device, room or address" aria-label="Find a device">' : ''}
+      <div id="list" style="display:flex;flex-direction:column;gap:12px"></div>
+      <p class="note">Addresses open the device's own page when you're on this home's network.${p.m ? ` ${p.m} more devices are on the full site sheet your installer keeps.` : ''} Everything here is stored in the sticker's code, not on a server.</p>`;
+    const list = document.getElementById('list');
+    const draw = q => {
+      q = (q || '').toLowerCase();
+      list.innerHTML = rooms.map(g => {
+        const items = g.list.filter(r => !q || [r.room, r.name, r.model, r.ip, r.mac].join(' ').toLowerCase().includes(q));
+        if (!items.length) return '';
+        return `<section class="room"><h2>${esc(g.name || 'Other')}</h2>${items.map(r => `<div class="dev"><span class="n">${esc(r.name)}</span>${r.ip ? `<a class="ip" href="http://${esc(r.ip)}/" target="_blank" rel="noopener">${esc(r.ip)}</a>` : ''}<span class="m">${esc(r.model)}</span>${r.mac ? `<span class="mac">${esc(r.mac)}</span>` : ''}</div>`).join('')}</section>`;
+      }).join('') || '<p class="note">No devices match.</p>';
+    };
+    draw('');
+    const q = document.getElementById('q');
+    if (q) q.addEventListener('input', () => draw(q.value));
+  }
+
+  function askPin(msg) {
+    view.innerHTML = `<form class="lock" id="lock">
+      <h1>Locked rack card</h1>
+      <p class="note">Your installer set a PIN on this sticker.</p>
+      <label for="pin" class="note">PIN</label>
+      <input id="pin" name="pin" type="password" inputmode="numeric" autocomplete="off" required>
+      ${msg ? `<p class="err" role="alert">${esc(msg)}</p>` : ''}
+      <button class="btn btn-primary" type="submit">Open</button>
+    </form>`;
+    const pin = document.getElementById('pin');
+    pin.focus();
+    document.getElementById('lock').addEventListener('submit', async e => {
+      e.preventDefault();
+      const b = e.target.querySelector('button'); b.disabled = true; b.textContent = 'Opening…';
+      try { show((await C4Rack.decode(frag, pin.value)).payload); }
+      catch (err) { askPin(err.message); }
+    });
+  }
+
+  (async () => {
+    if (!frag) { view.innerHTML = '<div class="panel-err">This page opens from a Site Sheet rack sticker. Scan the QR code on the rack with your phone\'s camera.</div>'; return; }
+    try {
+      const r = await C4Rack.decode(frag);
+      if (r.locked) askPin(); else show(r.payload);
+    } catch (e) { view.innerHTML = `<div class="panel-err">${esc(e.message)}</div>`; }
+  })();
+})();
+</script>
+</body>
+</html>
