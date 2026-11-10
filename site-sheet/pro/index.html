@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Site Sheet Pro</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="../assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=1a8738b2d6">
+<style>
+  .pro { max-width: 720px; padding-block: 72px 96px; display: flex; flex-direction: column; gap: 18px; }
+  .pro h1 { font-size: clamp(30px, 5vw, 46px); }
+  .pro p { color: var(--ink-2); }
+  .keybox { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-2, transparent); }
+  .keybox code { font: 500 clamp(16px, 3.4vw, 22px) "IBM Plex Mono", monospace; letter-spacing: .04em; word-break: break-all; flex: 1 1 260px; }
+  .keybox button { font: 600 14px "IBM Plex Sans", sans-serif; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+  .pro .steps { margin-top: 4px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="6" rx="1"/><rect x="3" y="13" width="26" height="6" rx="1"/><rect x="3" y="21" width="26" height="6" rx="1"/><circle cx="7" cy="8" r="1.2"/><circle cx="7" cy="16" r="1.2"/><circle cx="7" cy="24" r="1.2"/></svg>
+      Site Sheet
+    </a>
+  </div>
+</header>
+<main class="wrap pro">
+  <p class="eyebrow">Site Sheet Pro</p>
+
+  <section id="loading"><h1>Getting your license key…</h1><p>One moment.</p></section>
+
+  <section id="done" hidden>
+    <h1>Thank you. Here's your license key.</h1>
+    <div class="keybox"><code id="key"></code><button type="button" id="copy">Copy</button></div>
+    <p>Save it somewhere safe. <span id="mail"></span>If you lose it, reply to your Stripe receipt and we'll look it up.</p>
+    <ol class="steps">
+      <li><span class="n">1</span><div><b>Open Site Sheet</b><span><a href="../app/">In the browser</a>, or the Windows app.</span></div></li>
+      <li><span class="n">2</span><div><b>Click Go Pro</b><span>Top right. Paste the key and choose Activate.</span></div></li>
+      <li><span class="n">3</span><div><b>Up to 3 computers</b><span>Use the same key on each. To move it, open Pro and choose "Use on another computer".</span></div></li>
+    </ol>
+  </section>
+
+  <section id="wait" hidden>
+    <h1>Almost there</h1>
+    <p id="wait-text"></p>
+    <p><button type="button" class="btn" id="retry">Try again</button></p>
+  </section>
+
+  <section id="canceled" hidden>
+    <h1>Checkout canceled</h1>
+    <p>No charge was made. <a id="buy-again" href="#">Start checkout again</a>, or <a href="../app/">keep using Site Sheet for free</a>.</p>
+  </section>
+
+  <section id="manage" hidden>
+    <h1>Manage your subscription</h1>
+    <p id="manage-text"></p>
+  </section>
+
+  <section id="buy" hidden>
+    <h1>Site Sheet Pro</h1>
+    <p>The fleet report, cable labels and rack stickers, branded closeout packets, exports and saved project files. Yearly subscription for up to 3 computers.</p>
+    <p><a class="btn btn-primary" id="buy-link" href="#">Buy Pro</a></p>
+  </section>
+
+  <p class="fine">Your Control4 backups never leave your computer. The license server only ever sees your key and a computer label like "Site Sheet web on Windows".</p>
+</main>
+<script>
+(function () {
+  'use strict';
+  var SERVER = 'https://sitesheet-license.doolittle-thomas.workers.dev';   // filled in by tools/publish.sh from app/js/license.js
+  var q = new URLSearchParams(location.search);
+  var show = function (id) { ['loading', 'done', 'wait', 'canceled', 'manage', 'buy'].forEach(function (s) { document.getElementById(s).hidden = s !== id; }); };
+  document.getElementById('buy-link').href = document.getElementById('buy-again').href = SERVER + '/checkout';
+
+  if (q.get('canceled')) return show('canceled');
+  if (q.get('manage')) {
+    document.getElementById('manage-text').textContent = q.get('manage') === 'done'
+      ? 'All set. Any change you made applies right away; Site Sheet picks it up within a few days.'
+      : q.get('manage') === 'unknown'
+        ? 'That license key wasn’t found. Open Pro in Site Sheet and choose Manage subscription again, or reply to your Stripe receipt.'
+        : 'Your subscription is managed through Link by Stripe. Sign in at link.com with the email you paid with to update your card or cancel. Or reply to your Stripe receipt and we’ll help.';
+    return show('manage');
+  }
+  var session = q.get('session_id');
+  if (!session) return show('buy');
+  // Keep the checkout id out of the address bar (and so out of browser history) once read
+  history.replaceState(null, '', location.pathname);
+
+  function claim() {
+    show('loading');
+    fetch(SERVER + '/claim', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'session_id=' + encodeURIComponent(session) })
+      .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, b: b }; }); })
+      .then(function (x) {
+        if (!x.ok || !x.b.license_key) throw new Error(x.b.error || 'The key isn’t ready yet.');
+        document.getElementById('key').textContent = x.b.license_key;
+        if (x.b.email) document.getElementById('mail').textContent = 'It’s tied to ' + x.b.email + '. ';
+        show('done');
+      })
+      .catch(function (e) {
+        document.getElementById('wait-text').textContent = (e && e.message && !/fetch/i.test(e.message) ? e.message : 'Couldn’t reach the license server.') + ' Your payment is safe; try again in a minute.';
+        show('wait');
+      });
+  }
+  document.getElementById('retry').addEventListener('click', claim);
+  document.getElementById('copy').addEventListener('click', function () {
+    var k = document.getElementById('key').textContent, b = this;
+    (navigator.clipboard ? navigator.clipboard.writeText(k) : Promise.reject()).then(function () { b.textContent = 'Copied'; }, function () { b.textContent = 'Select and copy'; });
+  });
+  claim();
+})();
+</script>
+</body>
+</html>
