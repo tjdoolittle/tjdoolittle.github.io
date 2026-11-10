@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Site Sheet privacy policy</title>
+<link rel="icon" href="../assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=1a8738b2d6">
+<style>
+  .pp { max-width: 760px; padding-block: 72px 96px; }
+  .pp h1 { font-size: clamp(30px, 5vw, 44px); margin-bottom: 8px; }
+  .pp h2 { font-size: 22px; margin: 36px 0 10px; }
+  .pp p, .pp li { color: var(--ink-2); line-height: 1.6; }
+  .pp ul { padding-left: 20px; display: grid; gap: 6px; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="6" rx="1"/><rect x="3" y="13" width="26" height="6" rx="1"/><rect x="3" y="21" width="26" height="6" rx="1"/><circle cx="7" cy="8" r="1.2"/><circle cx="7" cy="16" r="1.2"/><circle cx="7" cy="24" r="1.2"/></svg>
+      Site Sheet
+    </a>
+  </div>
+</header>
+<main class="wrap pp">
+  <p class="eyebrow">Privacy</p>
+  <h1>Site Sheet privacy policy</h1>
+  <p class="fine">Effective November 10, 2026. Applies to the Site Sheet website, the web app, the Windows app (including the Microsoft Store version) and Site Sheet Pro.</p>
+
+  <h2>The short version</h2>
+  <p>Your Control4 project backups, OvrC and UniFi lists, and everything Site Sheet shows from them stay on your computer. Site Sheet has no account system and no server that receives your projects. The only things that ever leave your computer are listed below.</p>
+
+  <h2>Project files stay on your device</h2>
+  <ul>
+    <li>Backups (.c4p), OvrC device lists, pasted UniFi client lists and project files are opened and read inside the browser or the Windows app. They are never uploaded.</li>
+    <li>Projects you open, your schematic edits, notes and settings are kept in your browser's or the app's local storage on that computer. Clearing it removes them.</li>
+    <li>Saved project files and exports are written only where you choose to save them. A project file can be locked with a password; the password is never stored.</li>
+    <li>Rack QR stickers carry their device list inside the link itself, after the #. Browsers do not send that part of a link to any server, so the list is only read on the phone that scans it. An optional PIN encrypts it.</li>
+  </ul>
+
+  <h2>Site Sheet Pro licenses</h2>
+  <ul>
+    <li><b>Buying.</b> Payments are handled by Stripe as merchant of record. Stripe collects your email, payment and billing details under <a href="https://stripe.com/privacy">Stripe's privacy policy</a>. Site Sheet never sees your card details.</li>
+    <li><b>Your license key.</b> After checkout, a license key is created and stored with your Stripe customer record and on the Site Sheet license server (Cloudflare), linked to your Stripe customer, so the key can be checked and recovered if lost.</li>
+    <li><b>Activating and checking.</b> When you activate Pro, and about every three days after, the app sends the license key and a label for the computer (for example "Site Sheet web on Windows") to the license server, which replies whether the subscription is active. It keeps the list of computers using the key (up to 3) so you can move it. Nothing about your projects is sent.</li>
+  </ul>
+
+  <h2>Website visits</h2>
+  <p>The website may count visits with Cloudflare Web Analytics, which uses no cookies and does not identify or track individual people. It is never added to the rack card page or the thank-you page after checkout, and never runs inside the Windows app. The site loads its fonts from Google Fonts, which sees your IP address as part of serving them.</p>
+
+  <h2>What Site Sheet does not do</h2>
+  <ul>
+    <li>No advertising, no tracking cookies, no selling or sharing of data.</li>
+    <li>No collection of client names, addresses, network details or passwords from your backups.</li>
+  </ul>
+
+  <h2>Your choices</h2>
+  <p>You can use every free feature without buying anything or sending anything anywhere. To have your license record deleted, cancel your subscription and ask through your Stripe receipt; the key and its computer list are removed, though Stripe keeps payment records as the law requires.</p>
+
+  <h2>Changes and contact</h2>
+  <p>If this policy changes, the new version will be posted here with a new effective date. Questions: reply to your Stripe receipt, or use the contact details on the Microsoft Store listing.</p>
+  <p class="fine"><a href="../">Back to Site Sheet</a></p>
+</main>
+</body>
+</html>
