@@ -1,5 +1,5 @@
 {
-  "name": "Mileage Log",
+  "name": "Tax Mileage Tracker",
   "short_name": "Mileage",
   "description": "Business mileage tracker with live GPS, Google Maps Timeline import, and IRS-rate deductions.",
   "start_url": "./",

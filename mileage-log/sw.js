@@ -1,5 +1,5 @@
-// Mileage Log offline cache. Bump VERSION when shipping changes.
-const VERSION = "mileage-log-v3";
+// Tax Mileage Tracker offline cache. Bump VERSION when shipping changes.
+const VERSION = "mileage-log-v4";
 const CORE = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

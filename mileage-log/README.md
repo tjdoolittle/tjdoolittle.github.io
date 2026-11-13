@@ -1,4 +1,4 @@
-# Mileage Log
+# Tax Mileage Tracker
 
 A free business mileage tracker for iPhone. Track a drive live with GPS, or pull
 past drives in from Google Maps Timeline. It totals your business miles and the
@@ -6,7 +6,7 @@ IRS deduction for the year, and exports a CSV your accountant can use.
 
 **Open it:** <https://tjdoolittle.github.io/mileage-log/>
 
-![Mileage Log on three iPhones: live GPS tracking, the year summary, and Google Maps import](screenshots/hero.png)
+![Tax Mileage Tracker on three iPhones: live GPS tracking, the year summary, and Google Maps import](screenshots/hero.png)
 
 No account, no server, no tracking. Your trips are stored on your phone and
 never leave it unless you export them.
@@ -70,7 +70,7 @@ keep their data.
 
 1. Tap **Start trip**. Leave **Track miles with GPS** checked, and add the
    purpose and client now or when you finish.
-2. Keep Mileage Log open on screen while you drive. The app keeps the screen
+2. Keep Tax Mileage Tracker open on screen while you drive. The app keeps the screen
    awake for you.
 3. When you arrive, tap **Finish trip**. The GPS miles, start point, and end
    point are filled in. Review them and tap **Save trip**.
@@ -93,7 +93,7 @@ the most complete source. Timeline needs to be turned on in Google Maps.
 1. In Google Maps, tap your profile picture, then **Your Timeline**.
 2. Tap **⋯**, then **Location & privacy settings**, then **Export Timeline data**.
 3. Save the file to Files.
-4. In Mileage Log, tap **Import** and choose the file.
+4. In Tax Mileage Tracker, tap **Import** and choose the file.
 5. Check the business drives, add a purpose (and client if you like), and tap
    **Log trips**. Tap **Personal drive, hide it** on the rest.
 
@@ -123,7 +123,7 @@ more than once.
 
 ## Download and host it yourself
 
-Mileage Log is three files and an icon folder with no build step and no
+Tax Mileage Tracker is three files and an icon folder with no build step and no
 dependencies. To run your own copy:
 
 1. Download this folder: [`mileage-log.zip`](mileage-log.zip).

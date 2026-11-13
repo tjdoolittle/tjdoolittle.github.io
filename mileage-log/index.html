@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mileage Log</title>
+<title>Tax Mileage Tracker</title>
 <meta name="description" content="A free business mileage tracker for iPhone: live GPS trips, Google Maps Timeline import, IRS-rate deductions, and CSV export. Your data stays on your phone.">
 <meta name="theme-color" content="#0A6A4A">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -190,7 +190,7 @@ textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;bo
   <header class="top">
     <div class="brand">
       <svg class="shield" viewBox="0 0 22 24" aria-hidden="true"><path d="M11 1.5c3 1.6 6.3 1.8 9.3 1.2.5 6.8-1.2 15.7-9.3 19.8C2.9 18.4 1.2 9.5 1.7 2.7c3 .6 6.3.4 9.3-1.2z" fill="var(--sign)" stroke="var(--ink)" stroke-width="1.4"/><text x="11" y="15.5" text-anchor="middle" font-family="Overpass, sans-serif" font-weight="800" font-size="9" fill="#fff">MI</text></svg>
-      Mileage Log
+      Tax Mileage Tracker
     </div>
     <div class="top-actions">
     <button class="icon-btn" id="btn-import" type="button" aria-label="Import drives from Google Maps">
@@ -628,7 +628,7 @@ function openSettings(){
           for(const t of d.trips){ if(t&&t.id&&t.date&&!have.has(t.id)){ await backend.saveTrip(t); added++; } }
           if(d.settings) await backend.setSettings(Object.assign({},d.settings,S.settings,{rates:Object.assign({},d.settings.rates||{},S.settings?.rates||{}),ratePeriods:S.settings?.ratePeriods||d.settings.ratePeriods||undefined}));
           msg.textContent=`Restored ${added} trip${added===1?"":"s"}. ${d.trips.length-added} were already here.`; msg.hidden=false;
-        }catch(err){ msg.textContent="That file isn't a Mileage Log backup."; msg.hidden=false; }
+        }catch(err){ msg.textContent="That file isn't a Tax Mileage Tracker backup."; msg.hidden=false; }
       });
       $("x-csv").onclick=async()=>{
         const data=csvFor(y), name=`mileage-log-${y}.csv`;
