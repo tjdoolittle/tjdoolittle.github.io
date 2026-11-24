@@ -1,7 +1,7 @@
 {
   "name": "Tax Mileage Tracker",
-  "short_name": "Mileage",
-  "description": "Business mileage tracker with live GPS, Google Maps Timeline import, and IRS-rate deductions.",
+  "short_name": "Tax Mileage",
+  "description": "Business mileage tracker: GPS trips, IRS-rate deductions, parking and tolls, vehicles, and a PDF tax report.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

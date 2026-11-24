@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tax Mileage Tracker</title>
-<meta name="description" content="A free business mileage tracker for iPhone: live GPS trips, Google Maps Timeline import, IRS-rate deductions, and CSV export. Your data stays on your phone.">
+<meta name="description" content="Tax Mileage Tracker for the web: GPS trips, IRS-rate deductions, parking and tolls, vehicles, and a PDF tax report. Your data stays on your device.">
 <meta name="theme-color" content="#0A6A4A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mileage">
+<meta name="apple-mobile-web-app-title" content="Tax Mileage">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -162,7 +162,9 @@ button{cursor:pointer}
 .hint{font-size:13px;color:var(--muted);margin:0}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px;z-index:30;max-width:calc(100% - 32px)}
-.top-actions{display:flex;gap:8px}
+.top-actions{display:flex;gap:8px;flex:none}
+.brand{white-space:nowrap;min-width:0}
+@media (max-width:440px){.icon-btn .btn-t{display:none}.icon-btn{width:40px;justify-content:center;padding:0}}
 .steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px;font-size:15px}
 .file-btn{position:relative;overflow:hidden}
 .file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
@@ -180,6 +182,65 @@ button{cursor:pointer}
 .link-btn{border:0;background:none;padding:0;color:var(--muted);font-size:13px;font-weight:700;text-decoration:underline;align-self:flex-start}
 .maplink{font-size:14px;font-weight:700;color:var(--sign-text);align-self:flex-start}
 .imp-foot{position:sticky;bottom:0;background:var(--bg);padding-block:10px 4px;display:flex;flex-direction:column;gap:8px}
+/* Review queue, cards, walkthrough, settings sections */
+.card{border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.card.news{border-color:var(--sign)}
+.card .lbl{color:var(--sign-text)}
+.review-head{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-sign);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--amber)}
+.review-head span:last-child{color:var(--muted);letter-spacing:0;text-transform:none;font-family:var(--f-body);font-weight:400}
+.rv{display:flex;flex-direction:column;gap:6px}
+.rv-top{display:flex;justify-content:space-between;gap:10px;font-weight:700}
+.rv-route{font-size:14px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-amber{background:var(--amber-bg);border-radius:10px;padding:10px 12px;font-size:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700}
+.chip-btn[aria-pressed="true"]{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
+.seg3{grid-template-columns:1fr 1fr 1fr}
+.sec{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--line)}
+.sec h3{margin:0;font-family:var(--f-sign);font-weight:800;font-size:17px}
+.veh{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px}
+.veh small{display:block;color:var(--muted);font-size:13px}
+details.faq{border-bottom:1px solid var(--line);padding:8px 2px}
+details.faq summary{font-weight:700;cursor:pointer}
+details.faq p{margin:6px 0 2px;font-size:14px;color:var(--muted)}
+.walk{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;padding:calc(16px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-left,0px)) calc(16px + env(safe-area-inset-bottom,0px))}
+.walk-in{max-width:520px;width:100%;margin:0 auto;display:flex;flex-direction:column;flex:1;gap:16px}
+.walk-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-sign);font-weight:800;letter-spacing:.1em;font-size:13px;color:var(--sign-text);text-transform:uppercase}
+.walk-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.walk-step{align-self:flex-start;background:var(--sign);color:var(--sign-ink);border-radius:10px;padding:8px 14px;font-family:var(--f-sign);font-weight:800;letter-spacing:.08em;font-size:14px}
+.walk h2{margin:0;font-family:var(--f-sign);font-weight:800;font-size:30px;line-height:1.15}
+.walk p{margin:0;font-size:18px;line-height:1.55}
+.dots{display:flex;gap:8px;justify-content:center}
+.dots span{width:8px;height:8px;border-radius:4px;background:var(--line)}
+.dots span.on{width:22px;background:var(--sign)}
+.walk-btns{display:grid;grid-template-columns:auto 1fr;gap:10px}
+#print-slot{display:none}
+@media print{
+  body{background:#fff;color:#18211D}
+  body > *:not(#print-slot){display:none!important}
+  body::before{display:none}
+  :root{padding:0}
+  #print-slot{display:block}
+}
+.rep{font-family:var(--f-body);color:#18211D;font-size:11px}
+.rep h1{font-family:var(--f-sign);font-size:24px;margin:0 0 2px}
+.rep h2{font-family:var(--f-sign);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#0A6A4A;border-bottom:1.5px solid #0A6A4A;padding-bottom:3px;margin:18px 0 6px}
+.rep .sub{color:#5B6862;margin:0}
+.rep .boxes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rep .box{background:#EEF3F0;padding:8px 10px}
+.rep .box b{display:block;font-family:var(--f-sign);font-size:17px}
+.rep .box small{font-size:9px;font-weight:700;letter-spacing:.06em;color:#5B6862}
+.rep table{width:100%;border-collapse:collapse}
+.rep th{font-size:9.5px;text-align:left;color:#5B6862;font-weight:700;padding:4px;border-bottom:1px solid #D6DBD8}
+.rep td{padding:4px;border-bottom:1px solid #D6DBD8;vertical-align:top}
+.rep .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rep tr.tot td{font-weight:700;border-bottom:0}
+.rep tbody tr:nth-child(even) td{background:#F5F8F6}
+.rep .m{color:#5B6862;font-size:10px}
+.rep .note{color:#5B6862;font-size:10px;margin:4px 0 0}
+.rep .pb{break-before:page}
+.rep thead{display:table-header-group}
+.rep tr{break-inside:avoid}
 textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);padding:8px}
 
 @media (prefers-reduced-motion: reduce){.odo-strip,.sheet{transition:none;animation:none}.active .dot{animation:none}}
@@ -195,11 +256,11 @@ textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;bo
     <div class="top-actions">
     <button class="icon-btn" id="btn-import" type="button" aria-label="Import drives from Google Maps">
       <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5c-2.5 0-4.5 2-4.5 4.4C3.5 9.3 8 14.5 8 14.5s4.5-5.2 4.5-8.6c0-2.4-2-4.4-4.5-4.4z" stroke="currentColor" stroke-width="1.7" fill="none"/><circle cx="8" cy="6" r="1.6" fill="currentColor"/></svg>
-      Import
+      <span class="btn-t">Import</span>
     </button>
-    <button class="icon-btn" id="btn-settings" type="button" aria-label="Export and settings">
-      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8m0 0L4.5 6.5M8 10l3.5-3.5M2.5 13.5h11" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Export
+    <button class="icon-btn" id="btn-settings" type="button" aria-label="Settings, tax report, and export">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="2.4"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4"/></svg>
+      <span class="btn-t">Settings</span>
     </button>
     </div>
   </header>
@@ -223,9 +284,12 @@ textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;bo
   </section>
 
   <div id="active-slot"></div>
+  <div id="news-slot"></div>
+  <div id="review-slot"></div>
   <div id="log"></div>
   <p class="notice" id="notice" hidden></p>
-  <p class="notice legal"><a href="support.html">Support</a> · <a href="privacy.html">Privacy policy</a></p>
+  <p class="notice legal"><a href="support.html">Support</a> · <a href="privacy.html">Privacy policy</a> · <a href="https://apps.apple.com/us/app/tax-mileage-tracker/id6829102290" target="_blank" rel="noopener">iPhone app</a></p>
+  <p class="notice">© 2026 Thomas Doolittle. All rights reserved. Not affiliated with the IRS or any government agency.</p>
 </div>
 
 <nav class="bar-actions" aria-label="Trip actions">
@@ -234,6 +298,8 @@ textarea.csv{width:100%;height:140px;font-family:var(--f-mono);font-size:12px;bo
 
 <div id="sheet-slot"></div>
 <div id="toast-slot"></div>
+<div id="walk-slot"></div>
+<div id="print-slot" aria-hidden="true"></div>
 
 <datalist id="dl-places"></datalist>
 <datalist id="dl-clients"></datalist>
@@ -247,6 +313,38 @@ const IRS_RATES = [{from:"2024-01-01",rate:0.67},{from:"2025-01-01",rate:0.70},{
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const PURPOSES = ["Travel between offices","Client Visits","Business Meeting","Sales Calls","Deliveries","Banking","Admin Errands","Job Site Visits"];
+const COMMUTE_NOTE = "Regular Everyday Commute is Not Deductible";
+const IRS_URL = "https://www.irs.gov/tax-professionals/standard-mileage-rates";
+const GOV_DISCLAIMER = "Tax Mileage Tracker is not affiliated with, endorsed by, or acting for the IRS or any government agency.";
+const SUPPORT_EMAIL = "doolittle.thomas+apps@gmail.com";
+const APP_STORE_URL = "https://apps.apple.com/us/app/tax-mileage-tracker/id6829102290";
+const COPYRIGHT = "© 2026 Thomas Doolittle. All rights reserved.";
+// First-visit walkthrough. Pages 2 and 3 keep the owner's wording from the phone apps.
+const WALK = [
+  ["Every trip, logged","Tax Mileage Tracker logs every trip you take. Tap Start trip when you leave and Finish trip when you arrive, or import drives from your Google Maps Timeline."],
+  ["Log the trips you'll file","To create your log, you must click \u201cLog trip\u201d after completing each trip that is to be filed. Drives from a phone backup wait under To Review: tap Business or Personal."],
+  ["Add the tax details","Categorize your trips and provide other necessary tax information when logging, so that complete logs can simply be downloaded and submitted at tax time. Parking, tolls, and your vehicle go on the trip too."],
+  ["Ready at tax time","In Settings, make a PDF tax report or a spreadsheet for any year. Your trips stay in this browser, so save a backup now and then."]
+];
+const NEWS_ID = "2026-11-report";
+const NEWS = [
+  "PDF tax report in Settings, ready for your tax preparer",
+  "Parking and tolls on any trip",
+  "More than one vehicle, with yearly odometer readings",
+  "Home and work addresses, with a commute warning",
+  "Light, dark, or match your device: Settings, Appearance",
+  "Help and answers to common questions in Settings"
+];
+const FAQ = [
+  ["Do I have to log every trip?","Only the ones you'll file. Business trips count toward your deduction and the tax report. Drives from a phone backup wait under To Review until you tap Business or Personal."],
+  ["Is my commute deductible?","Regular commuting between home and your main workplace generally isn't. Trips between your saved home and work addresses are flagged. Ask a tax professional about your situation."],
+  ["Which rate does the app use?","Each trip uses the IRS standard mileage rate in effect on the day you drove it. You can see and change the rates in Settings, under Mileage rates."],
+  ["Can I deduct parking and tolls?","Parking fees and tolls for business trips are generally deductible on top of the mileage rate. Enter them on the trip and they're added to the report."],
+  ["What do I give my tax preparer?","The PDF tax report in Settings. It has your totals, vehicle miles for Schedule C, a monthly table, and every trip. The CSV has the same trips as a spreadsheet."],
+  ["Where is my data stored?","Only in this browser on this device. Nothing is sent anywhere unless you export it. Save a backup to move it to a new device or to the iPhone or Android app."],
+  ["Why use the phone app?","The iPhone and Android apps notice drives on their own, even with the phone in your pocket. This web version can only track while the page is open."]
+];
 
 const S = { trips:[], active:null, settings:{rates:{}}, year:new Date().getFullYear(), mode:"loading", readOnly:false };
 let backend = null;
@@ -262,7 +360,9 @@ const newId = () => "t-"+Date.now().toString(36)+Math.random().toString(36).slic
 // older backups may carry settings.rates = {year: rate}, which replaces that whole year.
 function schedule(){
   const st=S.settings||{};
-  let list = Array.isArray(st.ratePeriods) && st.ratePeriods.length ? st.ratePeriods.slice()
+  // A custom schedule still picks up IRS rates that start after its last entry, so new IRS rates reach everyone.
+  let list = Array.isArray(st.ratePeriods) && st.ratePeriods.length
+    ? (()=>{ const last=st.ratePeriods.map(p=>p.from).sort().pop()||""; return st.ratePeriods.concat(IRS_RATES.filter(p=>p.from>last)); })()
     : IRS_RATES.filter(p=>typeof st.rates?.[+p.from.slice(0,4)]!=="number")
         .concat(Object.entries(st.rates||{}).filter(([,r])=>typeof r==="number").map(([y,r])=>({from:y+"-01-01",rate:r})));
   return list.sort((a,b)=>a.from.localeCompare(b.from));
@@ -272,6 +372,28 @@ function rateOn(date){
   let r=sch[0].rate; for(const p of sch){ if(p.from<=date) r=p.rate; } return r;
 }
 const dedOf = t => (+t.miles||0)*rateOn(t.date);
+// Phone-app backups carry a status: only logged trips (or web trips with none) count as business.
+const isLogged = t => !t.status || t.status==="logged";
+const hasRateFor = y => schedule().some(p=>p.from.startsWith(y+"-"));
+function irsSummary(y){
+  const ps=IRS_RATES.filter(p=>p.from.startsWith(y+"-")); if(!ps.length) return null;
+  if(ps.length===1) return fmtCents(ps[0].rate)+"¢ per mile for all of "+y;
+  return ps.map((p,i)=>{ const end=ps[i+1]?dayBefore(ps[i+1].from):y+"-12-31";
+    return fmtCents(p.rate)+"¢ from "+MONTHS[+p.from.slice(5,7)-1]+" "+(+p.from.slice(8))+" through "+MONTHS[+end.slice(5,7)-1]+" "+(+end.slice(8)); }).join(", then ");
+}
+const vehicles = () => (S.settings?.vehicles||[]).filter(v=>v&&v.id);
+const vehicleFor = t => vehicles().find(v=>v.id===t.vehicleId) || vehicles()[0] || null;
+const normAddr = a => String(a||"").trim().toLowerCase();
+function isCommute(from,to){
+  const h=normAddr(S.settings?.homeAddress), w=normAddr(S.settings?.workAddress); if(!h||!w) return false;
+  const a=normAddr(from), b=normAddr(to); return (a===h&&b===w)||(a===w&&b===h);
+}
+function applyTheme(){
+  const t=S.settings?.theme, r=document.documentElement;
+  if(t==="light"||t==="dark") r.dataset.theme=t; else delete r.dataset.theme;
+  document.documentElement.style.colorScheme = t==="dark"?"dark":t==="light"?"light":"";
+}
+async function patchSettings(obj){ return write(()=>backend.setSettings(Object.assign({},S.settings||{},obj))); }
 const fmtCents = r => { const c=Math.round(r*1000)/10; return (c%1===0?c.toFixed(0):c.toFixed(1)); };
 const longDate = iso => { const d=parseDate(iso); return MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear(); };
 const dayBefore = iso => { const d=parseDate(iso); d.setDate(d.getDate()-1); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); };
@@ -315,9 +437,11 @@ function yearsAvailable(){
   S.trips.forEach(t=>ys.add(+t.date.slice(0,4)));
   return [...ys].sort((a,b)=>b-a).slice(0,4);
 }
-function tripsFor(y){ return S.trips.filter(t=>+t.date.slice(0,4)===y).sort((a,b)=> b.date.localeCompare(a.date) || (b.createdAt||0)-(a.createdAt||0)); }
+function tripsFor(y){ return S.trips.filter(t=>isLogged(t)&&+t.date.slice(0,4)===y).sort((a,b)=> b.date.localeCompare(a.date) || (b.createdAt||0)-(a.createdAt||0)); }
 function suggestions(){
   const places=new Set(),clients=new Set(),purposes=new Set();
+  const st=S.settings||{}; st.homeAddress&&places.add(st.homeAddress); st.workAddress&&places.add(st.workAddress);
+  PURPOSES.forEach(p=>purposes.add(p));
   S.trips.forEach(t=>{ t.from&&places.add(t.from); t.to&&places.add(t.to); t.client&&clients.add(t.client); t.purpose&&purposes.add(t.purpose); });
   const fill=(id,set)=>{ $(id).innerHTML=[...set].slice(0,60).map(v=>`<option value="${esc(v)}"></option>`).join(""); };
   fill("dl-places",places); fill("dl-clients",clients); fill("dl-purposes",purposes);
@@ -360,8 +484,12 @@ function render(){
   const max=Math.max(...byMonth,1);
   $("bars").innerHTML=byMonth.map((m,i)=>`<div class="bar${isCur&&i===now.getMonth()?" now":""}" style="height:${Math.max(4,m/max*100)}%" title="${MON[i]}: ${fmtMi(m)} mi"></div>`).join("");
 
+  applyTheme();
   // Active trip
   renderActive();
+  renderNews();
+  renderReview();
+  renderWalk();
 
   // Log
   if(S.mode==="loading"){ $("log").innerHTML=`<div class="empty"><p>Opening your mileage log…</p></div>`; }
@@ -388,6 +516,39 @@ function render(){
     ? `<button class="btn" type="button" data-act="log" ${dis}>Log trip</button><button class="btn amber" type="button" data-act="finish" ${dis}>Finish trip</button>`
     : `<button class="btn" type="button" data-act="start" ${dis}>Start trip</button><button class="btn primary" type="button" data-act="log" ${dis}>+ Log trip</button>`;
   suggestions();
+}
+
+function renderNews(){
+  const slot=$("news-slot"), st=S.settings||{};
+  const show = S.mode!=="loading" && st.seenNews!==NEWS_ID && (st.introDismissed || S.trips.length>0) && !walkShown();
+  if(!show){ slot.innerHTML=""; return; }
+  slot.innerHTML=`<div class="card news"><span class="lbl">New in this version</span>${NEWS.map(n=>`<div>• ${esc(n)}</div>`).join("")}<button class="btn small" type="button" id="news-ok" style="align-self:flex-end;padding:0 18px">Got it</button></div>`;
+  $("news-ok").onclick=()=>patchSettings({seenNews:NEWS_ID,introDismissed:true});
+}
+function renderReview(){
+  const slot=$("review-slot"), list=S.trips.filter(t=>t.status==="review").sort((a,b)=>b.date.localeCompare(a.date));
+  if(!list.length){ slot.innerHTML=""; return; }
+  slot.innerHTML=`<div class="card"><div class="review-head"><span>To review</span><span>${list.length} drive${list.length>1?"s":""}</span></div>`+
+    list.slice(0,20).map(t=>{ const d=parseDate(t.date), route=[t.from,t.to].filter(Boolean).map(esc).join(" → ")||"No route";
+      return `<div class="rv"><div class="rv-top"><span>${DOW[d.getDay()]}, ${MON[d.getMonth()]} ${d.getDate()}</span><span>${fmtMi(+t.miles||0)} mi</span></div><div class="rv-route">${route}</div>
+      <div class="split"><button class="btn small" type="button" data-rv-personal="${esc(t.id)}" ${S.readOnly?"disabled":""}>Personal</button><button class="btn small primary" type="button" data-rv-business="${esc(t.id)}" ${S.readOnly?"disabled":""}>Business · ${fmtUSD(dedOf(t))}</button></div></div>`; }).join("")+`</div>`;
+}
+let walkPage=0;
+const walkShown = () => S.mode!=="loading" && !(S.settings||{}).introDismissed && (S.trips.length===0 || S.walkAgain);
+function renderWalk(){
+  const slot=$("walk-slot"), st=S.settings||{};
+  if(!walkShown()){ slot.innerHTML=""; return; }
+  const [title,body]=WALK[walkPage], last=walkPage===WALK.length-1;
+  slot.innerHTML=`<div class="walk" id="walk-on" role="dialog" aria-modal="true" aria-labelledby="walk-title"><div class="walk-in">
+    <div class="walk-top"><span>Tax Mileage Tracker</span>${last?"":`<button class="link-btn" type="button" id="walk-skip">Skip</button>`}</div>
+    <div class="walk-body"><span class="walk-step">STEP ${walkPage+1} OF ${WALK.length}</span><h2 id="walk-title">${esc(title)}</h2><p>${esc(body)}</p></div>
+    <div class="dots">${WALK.map((_,i)=>`<span class="${i===walkPage?"on":""}"></span>`).join("")}</div>
+    <div class="walk-btns" style="${walkPage?"":"grid-template-columns:1fr"}">${walkPage?`<button class="btn" type="button" id="walk-back" style="padding:0 22px">Back</button>`:""}<button class="btn primary" type="button" id="walk-next">${last?"Get started":"Next"}</button></div>
+  </div></div>`;
+  const done=()=>{ S.walkAgain=false; walkPage=0; patchSettings({introDismissed:true,seenNews:NEWS_ID}); };
+  const sk=$("walk-skip"); if(sk) sk.onclick=done;
+  const bk=$("walk-back"); if(bk) bk.onclick=()=>{ walkPage--; renderWalk(); };
+  $("walk-next").onclick=()=>{ if(last) done(); else { walkPage++; renderWalk(); } };
 }
 
 function renderActive(){
@@ -489,7 +650,11 @@ function tripForm(t,{finishing=false}={}){
     <a id="f-gmap" class="maplink" target="_blank" rel="noopener" hidden>Check driving distance in Google Maps ↗</a>
     <div class="field"><label for="f-purpose">Business purpose</label><input id="f-purpose" list="dl-purposes" autocomplete="off" placeholder="Install Control4 system" value="${esc(t.purpose||"")}"></div>
     <div class="field"><label for="f-client">Client or job</label><input id="f-client" list="dl-clients" autocomplete="off" placeholder="Optional" value="${esc(t.client||"")}"></div>
-    <div class="field"><label for="f-notes">Notes</label><textarea id="f-notes" placeholder="Optional: tolls, parking, stops">${esc(t.notes||"")}</textarea></div>
+    <p class="note-amber" id="f-commute" hidden>${COMMUTE_NOTE}. This trip is between your saved home and work addresses.</p>
+    ${(S.settings?.homeAddress||S.settings?.workAddress)?`<div class="chips"><span class="hint" style="align-self:center">Fill in:</span>${S.settings.homeAddress?`<button class="chip-btn" type="button" data-fill="home">Home</button>`:""}${S.settings.workAddress?`<button class="chip-btn" type="button" data-fill="work">Work</button>`:""}</div>`:""}
+    <div class="field"><label for="f-parking">Parking and tolls, $</label><input id="f-parking" inputmode="decimal" placeholder="Optional" value="${t.parking>0?esc((+t.parking).toFixed(2)):""}"></div>
+    ${vehicles().length>1?`<div class="field"><label for="f-vehicle">Vehicle</label><select id="f-vehicle">${vehicles().map(v=>`<option value="${esc(v.id)}" ${(vehicleFor(t)||{}).id===v.id?"selected":""}>${esc(v.name)}</option>`).join("")}</select></div>`:""}
+    <div class="field"><label for="f-notes">Notes</label><textarea id="f-notes" placeholder="Optional: stops, details">${esc(t.notes||"")}</textarea></div>
     <p class="err" id="f-err" role="alert" hidden></p>
     <div class="sheet-actions">
       <button class="btn primary" type="submit">${finishing?"Save trip":t.id?"Save changes":"Log trip"}</button>
@@ -518,6 +683,13 @@ function wireTripForm(t,onSaved){
   const gmap=()=>{ const a=$("f-from").value.trim(), b=$("f-to").value.trim(), l=$("f-gmap");
     l.hidden=!(a&&b); if(a&&b) l.href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin="+encodeURIComponent(a)+"&destination="+encodeURIComponent(b); };
   ["f-from","f-to"].forEach(id=>$(id).addEventListener("input",gmap)); gmap();
+  const commute=()=>{ $("f-commute").hidden=!isCommute($("f-from").value,$("f-to").value); };
+  ["f-from","f-to"].forEach(id=>$(id).addEventListener("input",commute)); commute();
+  // Home/Work chips fill the first empty route field (From, then To).
+  document.querySelectorAll("[data-fill]").forEach(b=>b.onclick=()=>{
+    const addr=b.dataset.fill==="home"?S.settings.homeAddress:S.settings.workAddress;
+    const target=!$("f-from").value.trim()?$("f-from"):$("f-to"); target.value=addr; gmap(); commute();
+  });
   $("trip-form").addEventListener("submit",async e=>{
     e.preventDefault();
     const err=m=>{ $("f-err").textContent=m; $("f-err").hidden=false; };
@@ -525,15 +697,21 @@ function wireTripForm(t,onSaved){
     if(!date) return err("Pick the date of the trip.");
     if(!miles){ return err(mode==="odo" ? "Enter both odometer readings, with the end reading higher than the start." : "Enter how many miles you drove."); }
     if(!purpose) return err("Add a business purpose. The IRS requires one for every trip.");
-    const trip={
+    const pk=num(String($("f-parking").value).replace("$",""));
+    const vSel=$("f-vehicle");
+    // Start from the original so fields this page doesn't edit (from the phone apps) are kept.
+    const trip=Object.assign({},t,{
       id:t.id||newId(), date, miles, purpose,
       from:$("f-from").value.trim(), to:$("f-to").value.trim(), client:$("f-client").value.trim(), notes:$("f-notes").value.trim(),
       roundTrip: mode==="miles" && $("f-rt").checked,
       odoStart: mode==="odo"?num($("f-o1").value):null, odoEnd: mode==="odo"?num($("f-o2").value):null,
-      createdAt: t.createdAt||Date.now()
-    };
-    if(t.source) trip.source=t.source;
-    if(t.gKey) trip.gKey=t.gKey;
+      createdAt: t.createdAt||Date.now(),
+      status:"logged",
+      parking: pk&&pk>0 ? Math.round(pk*100)/100 : 0,
+      vehicleId: vSel ? vSel.value : (t.vehicleId||"")
+    });
+    if(!trip.parking) delete trip.parking;
+    if(!trip.vehicleId) delete trip.vehicleId;
     if(await write(()=>backend.saveTrip(trip))){
       S.year=+date.slice(0,4); closeSheet(); onSaved&&onSaved(trip); toast(`Logged ${fmtMi(miles)} mi`);
     }
@@ -598,35 +776,83 @@ function openFinish(){
 
 function csvFor(y){
   const q=v=>{ const s=String(v??""); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-  const rows=[["Date","From","To","Business purpose","Client","Odometer start","Odometer end","Round trip","Miles","Rate per mile","Deduction","Notes","Source"]];
-  const list=tripsFor(y).slice().reverse(); let tot=0, totDed=0;
-  list.forEach(t=>{ const r=rateOn(t.date), d=Math.round(t.miles*r*100)/100; tot+=+t.miles; totDed+=d;
-    rows.push([t.date,t.from,t.to,t.purpose,t.client,t.odoStart??"",t.odoEnd??"",t.roundTrip?"Yes":"",(+t.miles).toFixed(1),r.toFixed(3),d.toFixed(2),t.notes,t.source||"Manual"]); });
-  rows.push(["Total","","","","","","","",tot.toFixed(1),"",totDed.toFixed(2),"",""]);
+  const rows=[["Date","From","To","Business purpose","Client","Vehicle","Odometer start","Odometer end","Round trip","Miles","Rate per mile","Deduction","Parking and tolls","Notes","Source"]];
+  const list=tripsFor(y).slice().reverse(); let tot=0, totDed=0, totPk=0;
+  list.forEach(t=>{ const r=rateOn(t.date), d=Math.round(t.miles*r*100)/100, pk=+t.parking||0; tot+=+t.miles; totDed+=d; totPk+=pk;
+    rows.push([t.date,t.from,t.to,t.purpose,t.client,(vehicleFor(t)||{}).name||"",t.odoStart??"",t.odoEnd??"",t.roundTrip?"Yes":"",(+t.miles).toFixed(1),r.toFixed(3),d.toFixed(2),pk?pk.toFixed(2):"",t.notes,t.source||"Manual"]); });
+  rows.push(["Total","","","","","","","","",tot.toFixed(1),"",totDed.toFixed(2),totPk.toFixed(2),"",""]);
   return rows.map(r=>r.map(q).join(",")).join("\n");
 }
 
 function openSettings(){
-  const y=S.year, count=tripsFor(y).length;
-  openSheet(`${y} export & rates`,`
+  const y=S.year, count=tripsFor(y).length, st=S.settings||{}, ro=S.readOnly?"disabled":"";
+  const theme=st.theme||"system";
+  openSheet("Settings",`
     <div style="display:flex;flex-direction:column;gap:14px">
-      <button class="btn primary" type="button" id="x-csv" ${count?"":"disabled"}>Export ${y} as CSV (${count} trips)</button>
-      <div id="x-fallback"></div>
-      <p class="hint">The CSV includes date, route, purpose, miles, and the rate used for every trip: the records the IRS asks you to keep.</p>
-      <div class="field"><span class="lbl">Mileage rates</span><p class="hint">Each rate applies from its start date until the next one starts. Every trip uses the rate in effect on the day it was driven. Tap a rate to change it.</p></div>
-      <div id="x-rates"></div>
-      <div class="field"><span class="lbl">Backup</span><p class="hint">Trips live only on this phone. Save a backup to Files or iCloud Drive, and restore it on a new phone.</p></div>
-      <div class="split"><button class="btn small" type="button" id="x-backup">Save backup</button><span class="btn small file-btn" role="button">Restore<input id="x-restore" type="file" accept=".json,application/json" aria-label="Restore from backup"></span></div>
-      <p class="hint" id="x-restore-msg" hidden></p>
+      <div class="sec" style="border-top:0;padding-top:0"><h3>Tax time</h3>
+        <button class="btn primary" type="button" id="x-pdf" ${count?"":"disabled"}>${y} tax report (PDF)</button>
+        <p class="hint">Totals, deduction, parking and tolls, vehicle miles for Schedule C Part IV, a monthly table, and every trip. In the print screen, choose <b>Save as PDF</b> (on iPhone, tap Share, then Save to Files).</p>
+        <div class="field"><label for="x-name">Name or business on the report</label><input id="x-name" autocomplete="organization" placeholder="Optional" value="${esc(st.reportName||"")}" ${ro}></div>
+        <button class="btn small" type="button" id="x-csv" ${count?"":"disabled"}>Export ${y} as CSV (${count} trips)</button>
+        <div id="x-fallback"></div>
+      </div>
+      <div class="sec"><h3>Vehicles</h3>
+        <p class="hint">Odometer readings at the start and end of the year give the total miles Schedule C asks for. With more than one vehicle, pick one on each trip.</p>
+        <div id="x-veh" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <div class="sec"><h3>Home and work</h3>
+        <p class="hint">Fill in a trip's route with one tap. ${COMMUTE_NOTE}: trips between these two are flagged.</p>
+        <div class="field"><label for="x-home">Home address</label><input id="x-home" autocomplete="off" value="${esc(st.homeAddress||"")}" ${ro}></div>
+        <div class="field"><label for="x-work">Work address</label><input id="x-work" autocomplete="off" value="${esc(st.workAddress||"")}" ${ro}></div>
+        <button class="btn small" type="button" id="x-hw" ${ro}>Save addresses</button>
+      </div>
+      <div class="sec"><h3>Mileage rates</h3>
+        <p class="hint">Each rate applies from its start date until the next one starts. Every trip uses the rate in effect on the day it was driven. Tap a rate to change it.</p>
+        <div id="x-rates"></div>
+      </div>
+      <div class="sec"><h3>Appearance</h3>
+        <div class="seg seg3" id="x-theme">${[["system","Match device"],["light","Light"],["dark","Dark"]].map(([k,l])=>`<button type="button" data-theme-pick="${k}" aria-pressed="${theme===k}">${l}</button>`).join("")}</div>
+      </div>
+      <div class="sec"><h3>Help and feedback</h3>
+        <div>${FAQ.map(([q,a])=>`<details class="faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("")}</div>
+        <button class="btn small" type="button" id="x-walk">Show the walkthrough again</button>
+        <div class="split"><a class="btn small" id="x-feedback" href="#">Send feedback</a><a class="btn small" href="${APP_STORE_URL}" target="_blank" rel="noopener">iPhone app</a></div>
+      </div>
+      <div class="sec"><h3>Backup</h3>
+        <p class="hint">Trips live only in this browser. Save a backup now and then. It also restores into the iPhone and Android apps.</p>
+        <div class="split"><button class="btn small" type="button" id="x-backup">Save backup</button><span class="btn small file-btn" role="button">Restore<input id="x-restore" type="file" accept=".json,application/json" aria-label="Restore from backup"></span></div>
+        <p class="hint" id="x-restore-msg" hidden></p>
+      </div>
+      <p class="hint" style="text-align:center">Tax Mileage Tracker for the web · ${COPYRIGHT}</p>
     </div>`, ()=>{
-      $("x-backup").onclick=()=>{ const d={app:"mileage-log",version:1,exportedAt:new Date().toISOString(),trips:S.trips,settings:S.settings}; saveFile(`mileage-log-backup-${todayISO()}.json`,JSON.stringify(d,null,1),"application/json"); };
+      $("x-pdf").onclick=()=>printReport(y);
+      let nameT=null; $("x-name").addEventListener("input",e=>{ clearTimeout(nameT); const v=e.target.value; nameT=setTimeout(()=>patchSettings({reportName:v}),400); });
+      $("x-hw").onclick=async()=>{ if(await patchSettings({homeAddress:$("x-home").value.trim(),workAddress:$("x-work").value.trim()})) toast("Addresses saved"); };
+      document.querySelectorAll("[data-theme-pick]").forEach(b=>b.onclick=async()=>{
+        await patchSettings({theme:b.dataset.themePick});
+        document.querySelectorAll("[data-theme-pick]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+      });
+      $("x-walk").onclick=async()=>{ S.walkAgain=true; walkPage=0; closeSheet(); await patchSettings({introDismissed:false}); };
+      const body="\n\n---\nTax Mileage Tracker for the web, "+navigator.userAgent;
+      $("x-feedback").href="mailto:"+SUPPORT_EMAIL+"?subject="+encodeURIComponent("Tax Mileage Tracker feedback")+"&body="+encodeURIComponent(body);
+      $("x-backup").onclick=()=>{ const d={app:"mileage-log",version:1,exportedAt:new Date().toISOString(),trips:S.trips,settings:S.settings}; saveFile(`tax-mileage-tracker-backup-${todayISO()}.json`,JSON.stringify(d,null,1),"application/json"); };
       $("x-restore").addEventListener("change",async e=>{
         const f=e.target.files[0]; if(!f) return; const msg=$("x-restore-msg");
         try{
           const d=JSON.parse(await f.text()); if(d.app!=="mileage-log"||!Array.isArray(d.trips)) throw 0;
           const have=new Set(S.trips.map(t=>t.id)); let added=0;
           for(const t of d.trips){ if(t&&t.id&&t.date&&!have.has(t.id)){ await backend.saveTrip(t); added++; } }
-          if(d.settings) await backend.setSettings(Object.assign({},d.settings,S.settings,{rates:Object.assign({},d.settings.rates||{},S.settings?.rates||{}),ratePeriods:S.settings?.ratePeriods||d.settings.ratePeriods||undefined}));
+          if(d.settings){
+            const mine=S.settings||{}, theirs=d.settings;
+            const veh=(mine.vehicles||[]).concat((theirs.vehicles||[]).filter(v=>v&&v.id&&!(mine.vehicles||[]).some(m=>m.id===v.id)));
+            await backend.setSettings(Object.assign({},theirs,mine,{
+              rates:Object.assign({},theirs.rates||{},mine.rates||{}),
+              ratePeriods:mine.ratePeriods||theirs.ratePeriods||undefined,
+              vehicles:veh,
+              homeAddress:mine.homeAddress||theirs.homeAddress||"", workAddress:mine.workAddress||theirs.workAddress||"",
+              reportName:mine.reportName||theirs.reportName||""
+            }));
+          }
           msg.textContent=`Restored ${added} trip${added===1?"":"s"}. ${d.trips.length-added} were already here.`; msg.hidden=false;
         }catch(err){ msg.textContent="That file isn't a Tax Mileage Tracker backup."; msg.hidden=false; }
       });
@@ -637,7 +863,97 @@ function openSettings(){
         $("x-copy").onclick=()=>{ const ta=$("x-text"); navigator.clipboard.writeText(data).then(()=>toast("CSV copied"),()=>{ ta.focus(); ta.select(); toast("Selected. Use Copy from the menu."); }); };
       };
       renderRates();
+      renderVehicles(y);
     });
+}
+
+/* ---------- Vehicles ---------- */
+function renderVehicles(y,editId){
+  const box=$("x-veh"); if(!box) return;
+  const list=vehicles(), ro=S.readOnly?"disabled":"";
+  const fmtO=n=>Math.round(n).toLocaleString("en-US");
+  const line=v=>{ const o=(v.odometer||{})[y]||{};
+    return o.start!=null&&o.end!=null ? `${y} odometer ${fmtO(o.start)} to ${fmtO(o.end)}` : o.start!=null ? `${y} odometer starts at ${fmtO(o.start)}` : `No ${y} odometer readings yet`; };
+  const editing = editId==="new" ? {id:"v-"+Math.random().toString(36).slice(2,10),name:"",inService:"",odometer:{},isNew:true} : list.find(v=>v.id===editId);
+  const ed=v=>{ const o=(v.odometer||{})[y]||{};
+    return `<div class="card"><div class="field"><label for="v-name">Name</label><input id="v-name" placeholder="2022 Ford F-150" value="${esc(v.name)}"></div>
+      <div class="field"><label for="v-svc">First used for business</label><input id="v-svc" type="date" value="${esc(v.inService||"")}"></div>
+      <div class="row"><div class="field"><label for="v-s">Jan 1 odometer</label><input id="v-s" inputmode="decimal" value="${o.start??""}"></div><div class="field"><label for="v-e">Dec 31 odometer</label><input id="v-e" inputmode="decimal" value="${o.end??""}"></div></div>
+      <p class="hint">Use the first reading of ${y} (or when you started using it) and the last. Leave the end blank until the year is over.</p>
+      <p class="err" id="v-err" hidden></p>
+      <div class="split"><button class="btn small" type="button" id="v-cancel">Cancel</button><button class="btn small primary" type="button" id="v-save">Save vehicle</button></div>
+      ${v.isNew?"":`<button class="btn small danger" type="button" id="v-del">Remove vehicle</button>`}</div>`; };
+  box.innerHTML = list.map(v=> editing&&!editing.isNew&&editing.id===v.id ? ed(editing)
+      : `<button class="veh" type="button" data-veh="${esc(v.id)}" ${ro}><span>${esc(v.name)}<small>${line(v)}</small></span><span aria-hidden="true">›</span></button>`).join("")
+    + (editing&&editing.isNew ? ed(editing) : "")
+    + (editing ? "" : `<button class="btn small" type="button" id="v-add" ${ro}>${list.length?"Add another vehicle":"Add your vehicle"}</button>`);
+  box.querySelectorAll("[data-veh]").forEach(b=>b.onclick=()=>renderVehicles(y,b.dataset.veh));
+  const add=$("v-add"); if(add) add.onclick=()=>renderVehicles(y,"new");
+  if(!editing) return;
+  $("v-cancel").onclick=()=>renderVehicles(y);
+  const del=$("v-del"); if(del) del.onclick=async()=>{
+    const left=list.filter(v=>v.id!==editing.id);
+    for(const t of S.trips.filter(t=>t.vehicleId===editing.id)){ const c=Object.assign({},t); delete c.vehicleId; await backend.saveTrip(c); }
+    if(await patchSettings({vehicles:left})){ toast("Vehicle removed. Its trips moved to your first vehicle."); renderVehicles(y); }
+  };
+  $("v-save").onclick=async()=>{
+    const err=m=>{ $("v-err").textContent=m; $("v-err").hidden=false; };
+    const name=$("v-name").value.trim(), a=$("v-s").value.trim(), b=$("v-e").value.trim(), sa=a?num(a):null, sb=b?num(b):null;
+    if(!name) return err("Give the vehicle a name.");
+    if((a&&sa==null)||(b&&sb==null)) return err("Enter odometer readings as numbers.");
+    if(sa!=null&&sb!=null&&sb<sa) return err("The Dec 31 reading should be higher than Jan 1.");
+    const odo=Object.assign({},editing.odometer||{}); if(sa==null&&sb==null) delete odo[y]; else odo[y]={start:sa,end:sb};
+    const v={id:editing.id,name,inService:$("v-svc").value||"",odometer:odo};
+    const next=editing.isNew?list.concat([v]):list.map(x=>x.id===v.id?v:x);
+    if(await patchSettings({vehicles:next})){ toast("Vehicle saved"); renderVehicles(y); }
+  };
+  setTimeout(()=>{ const f=$("v-name"); f&&!f.value&&f.focus(); },50);
+}
+
+/* ---------- Tax report (print to PDF) ---------- */
+function printReport(y){
+  const st=S.settings||{}, trips=tripsFor(y).slice().reverse();
+  const personal=S.trips.filter(t=>t.status==="personal"&&+t.date.slice(0,4)===y);
+  const ded=t=>Math.round((+t.miles||0)*rateOn(t.date)*100)/100;
+  const miles=trips.reduce((a,t)=>a+(+t.miles||0),0), deduction=trips.reduce((a,t)=>a+ded(t),0), parking=trips.reduce((a,t)=>a+(+t.parking||0),0);
+  const vs=vehicles().length?vehicles():[{id:"",name:"Vehicle",odometer:{}}];
+  const owner=t=>(vehicleFor(t)||{}).id||"";
+  const mi=n=>fmtMi(n), u=fmtUSD, NE="Not entered";
+  const vRows=vs.map(v=>{ const o=(v.odometer||{})[y]||{}, bus=trips.filter(t=>owner(t)===v.id).reduce((a,t)=>a+(+t.miles||0),0);
+    const com=personal.filter(t=>owner(t)===v.id&&isCommute(t.from,t.to)).reduce((a,t)=>a+(+t.miles||0),0);
+    const total=(o.start!=null&&o.end!=null&&o.end>=o.start)?o.end-o.start:null, other=total!=null?Math.max(0,total-bus-com):null;
+    return `<tr><td>${esc(v.name)}</td><td>${v.inService?longDate(v.inService):NE}</td><td class="r">${o.start!=null&&o.end!=null?Math.round(o.start).toLocaleString("en-US")+"–"+Math.round(o.end).toLocaleString("en-US"):NE}</td><td class="r">${total!=null?mi(total):NE}</td><td class="r">${mi(bus)}</td><td class="r">${mi(com)}</td><td class="r">${other!=null?mi(other):NE}</td></tr>`; }).join("");
+  const sch=schedule(), groups={};
+  trips.forEach(t=>{ const k=(sch.filter(p=>p.from<=t.date).pop()||{}).from||""; (groups[k]=groups[k]||[]).push(t); });
+  const rRows=Object.keys(groups).sort().map(k=>{ const ts=groups[k], r=rateOn(ts[0].date), m=ts.reduce((a,t)=>a+(+t.miles||0),0);
+    return `<tr><td>${MON[+ts[0].date.slice(5,7)-1]} ${+ts[0].date.slice(8)} to ${MON[+ts[ts.length-1].date.slice(5,7)-1]} ${+ts[ts.length-1].date.slice(8)}</td><td class="r">${fmtCents(r)}¢ per mile</td><td class="r">${mi(m)}</td><td class="r">${u(m*r)}</td></tr>`; }).join("");
+  const mRows=MONTHS.map((name,i)=>{ const ts=trips.filter(t=>+t.date.slice(5,7)===i+1);
+    return `<tr><td>${name}</td><td class="r">${ts.length}</td><td class="r">${mi(ts.reduce((a,t)=>a+(+t.miles||0),0))}</td><td class="r">${u(ts.reduce((a,t)=>a+ded(t),0))}</td><td class="r">${u(ts.reduce((a,t)=>a+(+t.parking||0),0))}</td></tr>`; }).join("");
+  const multi=vehicles().length>1;
+  const tRows=trips.map(t=>{ const r=rateOn(t.date), route=([t.from,t.to].filter(Boolean).join(" → ")||"Route not entered")+(t.roundTrip?" (round trip)":"");
+    return `<tr><td>${MON[+t.date.slice(5,7)-1]} ${+t.date.slice(8)}</td><td>${esc(route)}<div class="m">${esc([t.purpose,t.client].filter(Boolean).join(" · "))}</div></td>${multi?`<td>${esc((vehicleFor(t)||{}).name||"")}</td>`:""}<td class="r">${mi(+t.miles||0)}</td><td class="r">${fmtCents(r)}¢</td><td class="r">${u(ded(t))}</td><td class="r">${t.parking>0?u(+t.parking):""}</td></tr>`; }).join("");
+  $("print-slot").innerHTML=`<div class="rep">
+    <h1>${y} Business Mileage Log</h1>
+    <p class="sub">${[st.reportName?esc(st.reportName):"","Prepared "+longDate(todayISO())].filter(Boolean).join("  ·  ")}</p>
+    <h2>Summary</h2>
+    <div class="boxes"><div class="box"><b>${mi(miles)}</b><small>BUSINESS MILES</small></div><div class="box"><b>${u(deduction)}</b><small>MILEAGE DEDUCTION</small></div><div class="box"><b>${u(parking)}</b><small>PARKING AND TOLLS</small></div><div class="box"><b>${u(deduction+parking)}</b><small>TOTAL</small></div></div>
+    <p class="note">${trips.length} business trips. Each trip uses the IRS standard mileage rate in effect on the day it was driven. Parking fees and tolls for business trips are deductible in addition to the standard mileage rate.</p>
+    <h2>Vehicle information</h2>
+    <p class="note">The numbers Schedule C (Form 1040), Part IV, asks for. Total miles come from the odometer readings entered in Settings.</p>
+    <table><thead><tr><th>Vehicle</th><th>In service</th><th class="r">Odometer</th><th class="r">Total miles</th><th class="r">Business</th><th class="r">Commuting</th><th class="r">Other</th></tr></thead><tbody>${vRows}</tbody></table>
+    <p class="note">Commuting is trips marked personal between your saved home and work addresses. Other is total miles minus business and commuting.</p>
+    ${rRows?`<h2>Rates used</h2><table><thead><tr><th>Trips dated</th><th class="r">Rate</th><th class="r">Miles</th><th class="r">Deduction</th></tr></thead><tbody>${rRows}</tbody></table><p class="note">Source: IRS standard mileage rates, ${IRS_URL}</p>`:""}
+    <h2>By month</h2>
+    <table><thead><tr><th>Month</th><th class="r">Trips</th><th class="r">Miles</th><th class="r">Deduction</th><th class="r">Parking and tolls</th></tr></thead><tbody>${mRows}<tr class="tot"><td>Total</td><td class="r">${trips.length}</td><td class="r">${mi(miles)}</td><td class="r">${u(deduction)}</td><td class="r">${u(parking)}</td></tr></tbody></table>
+    <div class="pb"></div>
+    <h2>Trip log</h2>
+    <table><thead><tr><th>Date</th><th>Route and purpose</th>${multi?"<th>Vehicle</th>":""}<th class="r">Miles</th><th class="r">Rate</th><th class="r">Deduction</th><th class="r">Parking</th></tr></thead><tbody>${tRows}<tr class="tot"><td>Total</td><td>${trips.length} trips</td>${multi?"<td></td>":""}<td class="r">${mi(miles)}</td><td></td><td class="r">${u(deduction)}</td><td class="r">${u(parking)}</td></tr></tbody></table>
+    <p class="note" style="margin-top:12px">Records kept with Tax Mileage Tracker. You're responsible for the accuracy of the trips you log. This report isn't tax advice; check with a tax professional about your own situation. ${GOV_DISCLAIMER} ${COPYRIGHT}</p>
+  </div>`;
+  const prevTitle=document.title; document.title=`mileage-report-${y}`;
+  const restore=()=>{ document.title=prevTitle; window.removeEventListener("afterprint",restore); };
+  window.addEventListener("afterprint",restore);
+  setTimeout(()=>{ try{ window.print(); }catch(e){ toast("Printing isn't available here. Open this page in Safari or Chrome."); restore(); } },60);
 }
 
 function saveSchedule(list){
@@ -656,7 +972,9 @@ function renderRates(editFrom){
       : `<button class="rate-row" type="button" data-rate="${p.from}" ${S.readOnly?"disabled":""}><span>${range}</span><b>${fmtCents(p.rate)}¢</b></button>`).join("")}</div>
     ${editing&&editing.isNew?editorHtml(editing,false):""}
     <div class="split" style="margin-top:10px"><button class="btn small" type="button" id="r-add" ${S.readOnly||editing?"disabled":""}>Add rate change</button>${custom?`<button class="btn small" type="button" id="r-irs" ${S.readOnly?"disabled":""}>Use IRS rates</button>`:"<span></span>"}</div>
-    <p class="hint" style="margin-top:8px">IRS business rate for 2026: 72.5¢ through June 30, then 76¢ from July 1 through December 31.</p>`;
+    ${rateNote()}
+    <p class="hint" style="margin-top:8px"><a class="maplink" href="${IRS_URL}" target="_blank" rel="noopener">Source: IRS standard mileage rates (irs.gov) ↗</a></p>
+    <p class="hint">${GOV_DISCLAIMER}</p>`;
   box.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>renderRates(b.dataset.rate));
   const add=$("r-add"); if(add) add.onclick=()=>renderRates("new");
   const irs=$("r-irs"); if(irs) irs.onclick=async()=>{ const st=Object.assign({},S.settings||{}); delete st.ratePeriods; st.rates={}; if(await write(()=>backend.setSettings(st))){ toast("Using the IRS rates"); renderRates(); render(); } };
@@ -671,6 +989,12 @@ function renderRates(editFrom){
     if(await saveSchedule(next)){ toast(`Rate saved. Trips from ${longDate(from)} on use ${fmtCents(Math.round(c*10)/1000)}¢.`); renderRates(); render(); }
   };
   setTimeout(()=>{ const f=$("r-cents"); f&&f.focus(); },50);
+}
+function rateNote(){
+  const y=new Date().getFullYear(), irs=irsSummary(y);
+  if(irs) return `<p class="hint" style="margin-top:8px">IRS business rate for ${y}: ${esc(irs)}.</p>`;
+  if(hasRateFor(y)) return "";
+  return `<p class="note-amber" style="margin-top:8px">The IRS rate for ${y} isn't in this version yet (the IRS usually announces it in December). Trips keep using ${fmtCents(rateOn(todayISO()))}¢ until you tap Add rate change and enter the new rate starting January 1, or until an update adds it.</p>`;
 }
 function editorHtml(e,canDelete){
   return `<div class="rate-edit">
@@ -848,6 +1172,8 @@ function toast(msg){ $("toast-slot").innerHTML=`<div class="toast" role="status"
 document.addEventListener("click",async e=>{
   const yb=e.target.closest("[data-year]"); if(yb){ S.year=+yb.dataset.year; render(); return; }
   const tb=e.target.closest("[data-trip]"); if(tb){ const t=S.trips.find(x=>x.id===tb.dataset.trip); if(t&&!S.readOnly) openLog(t); return; }
+  const rp=e.target.closest("[data-rv-personal]"); if(rp){ const t=S.trips.find(x=>x.id===rp.dataset.rvPersonal); if(t&&await write(()=>backend.saveTrip(Object.assign({},t,{status:"personal"})))) toast("Marked personal"); return; }
+  const rb=e.target.closest("[data-rv-business]"); if(rb){ const t=S.trips.find(x=>x.id===rb.dataset.rvBusiness); if(t) openLog(Object.assign({},t)); return; }
   const ab=e.target.closest("[data-act]"); if(!ab) return;
   const act=ab.dataset.act;
   if(act==="log") openLog();
