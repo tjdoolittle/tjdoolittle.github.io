@@ -272,7 +272,8 @@ a { color: var(--accent); }
 .card-links a:hover,
 .card-links a:focus-visible { border-bottom-color: currentColor; }
 
-.link-primary::after {
+/* Every card link gets an arrow; the first (primary) link stays bold-colored. */
+.card-links a::after {
   content: " →";
   letter-spacing: -.05em;
 }
