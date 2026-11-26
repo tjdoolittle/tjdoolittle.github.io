@@ -18,6 +18,7 @@ tracker (see below), and it stays off until you add a code.
 | `.nojekyll` | Tells Pages to serve the files as-is, no Jekyll processing. |
 | `mileage-log/` | The Tax Mileage Tracker app (its own README covers it). |
 | `aye-buddy/` | Aye Buddy, the Doom-style browser game. One self-contained `index.html`. |
+| `fry-hard/` | Fry Hard, the Thanksgiving turkey platformer. One self-contained `index.html`. |
 
 ## Visit stats
 
