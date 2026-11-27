@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendar Punchlist: daily checklists for field techs, from Google Calendar</title>
+<meta name="description" content="A free, open source Google Apps Script that turns a shared Google Calendar into a daily checklist for every technician. No server, no subscription.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Calendar Punchlist">
+<meta property="og:description" content="Turn a shared Google Calendar into a daily checklist for every tech. Free and open source.">
+<meta property="og:url" content="https://tjdoolittle.github.io/punchlist/">
+<meta property="og:image" content="https://tjdoolittle.github.io/assets/punchlist.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1f6f5c">
+<style>
+  :root {
+    --bg: #fbfbfa; --card: #fff; --sunken: #f1f1ef; --text: #1a1a19; --muted: #61615d; --faint: #8a8a84;
+    --rule: #e2e2de; --accent: #1f6f5c; --accent-soft: #e6f2ee;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #131414; --card: #1a1c1c; --sunken: #202322; --text: #ececea; --muted: #a3a49f; --faint: #7b7c77;
+      --rule: #2a2d2c; --accent: #5ec5a5; --accent-soft: #16302a; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.55 var(--sans); }
+  a { color: var(--accent); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .back { display: inline-block; margin: 22px 0 0; font-size: 15px; text-decoration: none; color: var(--muted); }
+  .hero { display: grid; grid-template-columns: 1fr 340px; gap: 56px; align-items: center; padding: 40px 0 64px; }
+  .eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 650; margin: 0 0 10px; }
+  h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; letter-spacing: -.02em; margin: 0 0 18px; }
+  .lede { font-size: 19px; color: var(--muted); margin: 0 0 26px; max-width: 34em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn { display: inline-block; padding: 11px 18px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 1px solid var(--rule); color: var(--text); background: var(--card); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .btn-primary { color: #0d1a16; } }
+  .fine { font-size: 14px; color: var(--faint); margin-top: 14px; }
+  .phone { width: 340px; height: 700px; border-radius: 48px; background: #1c1d1d; padding: 12px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.45); position: relative; }
+  .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 38px; background: #f4f5f3; }
+  .phone-cap { text-align: center; font-size: 14px; color: var(--faint); margin-top: 14px; }
+  section { padding: 56px 0; border-top: 1px solid var(--rule); }
+  h2 { font-size: 28px; letter-spacing: -.01em; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 28px; max-width: 40em; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; font-size: 16px; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { background: var(--sunken); font-size: 13px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  code { font-family: var(--mono); font-size: .88em; background: var(--sunken); padding: 2px 6px; border-radius: 5px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .tile { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 20px; }
+  .tile h3 { margin: 0 0 6px; font-size: 18px; }
+  .tile p { margin: 0; color: var(--muted); font-size: 16px; }
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ol.steps li { counter-increment: s; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px 16px 62px; position: relative; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 18px; top: 15px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 700; display: grid; place-content: center; font-size: 15px; }
+  ol.steps b { display: block; }
+  ol.steps span { color: var(--muted); font-size: 16px; }
+  footer { padding: 40px 0 60px; color: var(--faint); font-size: 14px; border-top: 1px solid var(--rule); }
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 36px; }
+    .phone { margin: 0 auto; width: min(340px, 100%); height: 660px; }
+    .grid3 { grid-template-columns: 1fr; }
+    th:first-child, td:first-child { width: 45%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&larr; Thomas Doolittle</a>
+
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Free and open source &middot; Google Apps Script</p>
+      <h1>Your job calendar, as a checklist for every tech.</h1>
+      <p class="lede">The office keeps scheduling in Google Calendar the way it does now. Each tech opens one link on their phone and sees today's jobs, the address, the gate code, and a checklist built from the event notes plus your standard steps for that kind of job. Every check-off is logged to a Google Sheet.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/tjdoolittle/calendar-punchlist#set-it-up-about-10-minutes">Get it free</a>
+        <a class="btn" href="demo/">Open the demo</a>
+        <a class="btn" href="https://github.com/tjdoolittle/calendar-punchlist">GitHub</a>
+      </div>
+      <p class="fine">No server, no subscription, no AI. It runs inside your own Google account, so client addresses and codes never leave it.</p>
+    </div>
+    <div>
+      <div class="phone"><iframe src="demo/" title="Live demo of the punchlist app with sample jobs" loading="lazy"></iframe></div>
+      <p class="phone-cap">Live demo with sample jobs. Tap a box.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>Built from how crews already work</h2>
+    <p class="sub">I made this for the install techs at an AV and home automation company. Jobs were already on a shared calendar with the tech's initials in the title, so the app reads that instead of asking anyone to change.</p>
+    <table>
+      <thead><tr><th>On the calendar</th><th>In the app</th></tr></thead>
+      <tbody>
+        <tr><td><code>Hartwell Residence - AR</code></td><td>Goes on Alex's tab. Tags work at the end or start: <code>[AR] Hartwell</code>, <code>AR: Hartwell</code>, <code>Hartwell (AR)</code></td></tr>
+        <tr><td>No tag, Alex invited as a guest</td><td>Goes on Alex's tab</td></tr>
+        <tr><td>Each line of the description</td><td>A checkbox</td></tr>
+        <tr><td><code>Gate code: 4471</code></td><td>Shown as job info, not a task</td></tr>
+        <tr><td>"Prewire" in the title or notes</td><td>Your standard prewire checklist is added</td></tr>
+        <tr><td>Location</td><td>Tap to open in Maps</td></tr>
+        <tr><td><code>Jordan Off</code></td><td>A crew note at the top of the day</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Set up from a spreadsheet</h2>
+    <p class="sub">The office manages everything in a Google Sheet. Adding a tech or a checklist is a new row, not a code change.</p>
+    <div class="grid3">
+      <div class="tile"><h3>Techs</h3><p>Name, the tag used in event titles, and their Google email. Their own tab opens first when they sign in. Managers get a view of everyone.</p></div>
+      <div class="tile"><h3>Checklists</h3><p>Keyword and task, one row each. Every job that mentions the keyword gets those steps, with a small label so techs know where they came from.</p></div>
+      <div class="tile"><h3>Log</h3><p>Each check-off with the job, the task, the time and who did it. Sort it, filter it, or build a report from it.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Set it up in about 10 minutes</h2>
+    <p class="sub">You need a Google account that can see the job calendar. Works with Google Workspace or a personal Gmail.</p>
+    <ol class="steps">
+      <li><b>Make the sheet</b><span>Copy the template, or make a new sheet and paste the two files from GitHub into Extensions &gt; Apps Script.</span></li>
+      <li><b>Run Punchlist &gt; Set up sheet</b><span>It adds the Settings, Techs, Checklists and Log tabs with examples.</span></li>
+      <li><b>Fill in your calendar and techs</b><span>Then Punchlist &gt; Test my calendar shows how many jobs it found for each person.</span></li>
+      <li><b>Deploy as a web app</b><span>Execute as you, open to your organization. Send the link and have techs add it to their home screen.</span></li>
+    </ol>
+    <p class="fine">Full instructions are in the <a href="https://github.com/tjdoolittle/calendar-punchlist#readme">README</a>.</p>
+  </section>
+
+  <footer>MIT license. Made by <a href="../">Thomas Doolittle</a>. Questions or a feature you need: <a href="mailto:doolittle.thomas@gmail.com">email me</a>.</footer>
+</div>
+<script src="../site.js"></script>
+</body>
+</html>

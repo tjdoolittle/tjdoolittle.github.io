@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f6f5c">
+<title>Punchlist</title>
+<style>
+  :root {
+    --bg: #f4f5f3; --card: #fff; --sunken: #eceeea; --text: #1a1a19; --muted: #61615d; --faint: #8a8a84;
+    --rule: #e2e2de; --accent: #1f6f5c; --accent-soft: #e3f1ec; --warn: #8a6212; --warn-soft: #fbf1dc;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #121313; --card: #1b1d1d; --sunken: #232625; --text: #ececea; --muted: #a3a49f; --faint: #7b7c77;
+      --rule: #2c2f2e; --accent: #5ec5a5; --accent-soft: #17312a; --warn: #d4a343; --warn-soft: #33280f; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.4 var(--sans); -webkit-text-size-adjust: 100%; }
+  button { font: inherit; color: inherit; }
+  .top { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: calc(10px + env(safe-area-inset-top)) 16px 0; border-bottom: 1px solid var(--rule); }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .company { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; flex: 1; }
+  .icon-btn { border: 1px solid var(--rule); background: var(--card); border-radius: 10px; min-width: 38px; height: 38px; padding: 0 10px; cursor: pointer; }
+  .icon-btn:active { transform: scale(.97); }
+  .datebar { margin: 8px 0 10px; }
+  .date { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+  .tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; border: 1px solid var(--rule); background: var(--card); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 15px; }
+  .tab .n { color: var(--faint); margin-left: 4px; font-size: 13px; }
+  .tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tab[aria-selected="true"] .n { color: rgba(255,255,255,.75); }
+  @media (prefers-color-scheme: dark) { .tab[aria-selected="true"] { color: #0d1a16; } .tab[aria-selected="true"] .n { color: rgba(0,0,0,.6); } }
+  main { padding: 14px 16px calc(40px + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto; }
+  .demo { background: var(--warn-soft); color: var(--warn); border-radius: 10px; padding: 8px 12px; font-size: 14px; margin-bottom: 12px; }
+  .crew { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .chip { background: var(--sunken); color: var(--muted); border-radius: 999px; padding: 4px 10px; font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 14px 6px; margin-bottom: 12px; }
+  .card.done { opacity: .72; }
+  .meta { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .meta .who { background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 1px 7px; font-weight: 600; font-size: 12px; }
+  .meta .count { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .title { font-size: 18px; font-weight: 650; margin: 4px 0 2px; }
+  .loc { display: inline-block; font-size: 14px; color: var(--accent); text-decoration: none; margin-bottom: 4px; }
+  .bar { height: 4px; background: var(--sunken); border-radius: 4px; overflow: hidden; margin: 8px 0 6px; }
+  .bar i { display: block; height: 100%; background: var(--accent); transition: width .25s; }
+  .info { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 14px; margin: 6px 0; padding: 8px 10px; background: var(--sunken); border-radius: 8px; }
+  .info dt { color: var(--muted); } .info dd { margin: 0; user-select: all; }
+  ul.tasks { list-style: none; margin: 4px 0 0; padding: 0; }
+  ul.tasks li { border-top: 1px solid var(--rule); }
+  ul.tasks label { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; cursor: pointer; }
+  ul.tasks input { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 2px solid var(--faint); border-radius: 6px; display: grid; place-content: center; cursor: pointer; }
+  ul.tasks input:checked { background: var(--accent); border-color: var(--accent); }
+  ul.tasks input:checked::after { content: ""; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: translateY(-1px) rotate(45deg); }
+  ul.tasks input:checked + span { color: var(--faint); text-decoration: line-through; }
+  .src { flex: none; align-self: center; margin-left: auto !important; font-size: 11px; color: var(--faint); border: 1px solid var(--rule); border-radius: 5px; padding: 0 5px; margin-left: 6px; text-transform: lowercase; white-space: nowrap; }
+  .empty { text-align: center; color: var(--muted); padding: 50px 20px; }
+  .empty b { display: block; color: var(--text); font-size: 18px; margin-bottom: 4px; }
+  .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: 90vw; }
+  .toast.show { opacity: 1; }
+  .spin { animation: spin .8s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="row"><div class="company" id="company">Punchlist</div><button class="icon-btn" id="refresh" aria-label="Refresh">&#8635;</button></div>
+    <div class="row datebar">
+      <button class="icon-btn" id="prev" aria-label="Previous day">&#8249;</button>
+      <div class="date" id="date">Loading…</div>
+      <button class="icon-btn" id="today">Today</button>
+      <button class="icon-btn" id="next" aria-label="Next day">&#8250;</button>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </div>
+  <main id="main"><div class="empty">Loading…</div></main>
+  <div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  'use strict';
+  var LIVE = typeof google !== 'undefined' && google.script && google.script.run;
+  var store = {
+    get: function (k) { try { return localStorage.getItem('punchlist.' + k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem('punchlist.' + k, v); } catch (e) {} }
+  };
+  var data = null, current = ymd(new Date()), tab = store.get('tab') || '';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function shift(dateStr, n) { var p = dateStr.split('-'); var d = new Date(+p[0], p[1] - 1, +p[2] + n); return ymd(d); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { t.classList.remove('show'); }, 2600); }
+
+  /* ---------- server calls (or the demo stand-in) ---------- */
+  function call(fn, args, ok, fail) {
+    if (LIVE) {
+      var r = google.script.run.withSuccessHandler(ok).withFailureHandler(fail || function (e) { toast(e.message || String(e)); });
+      r[fn].apply(r, args);
+    } else {
+      setTimeout(function () { try { ok(Demo[fn].apply(null, args)); } catch (e) { (fail || toast)(e.message || e); } }, 120);
+    }
+  }
+
+  function load(dateStr) {
+    current = dateStr;
+    $('refresh').innerHTML = '<span class="spin">&#8635;</span>';
+    call('getPunchlist', [dateStr], function (d) {
+      data = d;
+      $('refresh').innerHTML = '&#8635;';
+      if (!tab || (tab !== 'ALL' && !d.techs.some(function (t) { return t.tag === tab; }))) tab = d.me || (d.techs[0] ? d.techs[0].tag : 'ALL');
+      render();
+    }, function (e) {
+      $('refresh').innerHTML = '&#8635;';
+      $('main').innerHTML = '<div class="empty"><b>Could not load the calendar</b>' + esc(e.message || e) + '</div>';
+    });
+  }
+
+  /* ---------- rendering ---------- */
+  function render() {
+    var d = data;
+    $('company').textContent = d.company;
+    document.title = d.company + ' Punchlist';
+    $('date').textContent = d.dateLabel;
+    $('today').style.visibility = d.date === ymd(new Date()) ? 'hidden' : 'visible';
+
+    var counts = { ALL: d.jobs.length };
+    d.jobs.forEach(function (j) { counts[j.tech] = (counts[j.tech] || 0) + 1; });
+    var tabs = d.techs.map(function (t) { return { tag: t.tag, label: t.name.split(' ')[0] }; }).concat([{ tag: 'ALL', label: 'All' }]);
+    $('tabs').innerHTML = tabs.map(function (t) {
+      return '<button class="tab" role="tab" data-tab="' + esc(t.tag) + '" aria-selected="' + (t.tag === tab) + '">' + esc(t.label) + '<span class="n">' + (counts[t.tag] || 0) + '</span></button>';
+    }).join('');
+
+    var jobs = d.jobs.filter(function (j) { return tab === 'ALL' || j.tech === tab; });
+    var techName = {}; d.techs.forEach(function (t) { techName[t.tag] = t.name.split(' ')[0]; });
+    var html = LIVE ? '' : '<div class="demo">Demo with sample jobs. Check boxes to try it; nothing is saved.</div>';
+
+    var crew = d.crew.filter(function (c) { return tab === 'ALL' || !c.tech || c.tech === tab; });
+    if (crew.length) html += '<div class="crew">' + crew.map(function (c) { return '<span class="chip">' + esc(c.text) + '</span>'; }).join('') + '</div>';
+
+    if (!jobs.length) {
+      html += '<div class="empty"><b>Nothing scheduled</b>' + (tab === 'ALL' ? 'No jobs on the calendar for this day.' : 'No jobs for ' + esc(techName[tab] || tab) + ' this day.') + '</div>';
+    }
+    jobs.forEach(function (j) {
+      var done = j.tasks.filter(function (t) { return t.done; }).length, total = j.tasks.length;
+      html += '<article class="card' + (total && done === total ? ' done' : '') + '" data-id="' + esc(j.id) + '">' +
+        '<div class="meta"><span>' + esc(j.time) + '</span>' +
+        (tab === 'ALL' ? '<span class="who">' + esc(j.tech ? (techName[j.tech] || j.tech) : 'Unassigned') + '</span>' : '') +
+        (total ? '<span class="count">' + done + '/' + total + '</span>' : '') + '</div>' +
+        '<div class="title">' + esc(j.title) + '</div>' +
+        (j.location ? '<a class="loc" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(j.location) + '">&#9906; ' + esc(j.location) + '</a>' : '') +
+        (total ? '<div class="bar"><i style="width:' + Math.round(100 * done / total) + '%"></i></div>' : '') +
+        (j.info.length ? '<dl class="info">' + j.info.map(function (i) { return '<dt>' + esc(i.label) + '</dt><dd>' + esc(i.value) + '</dd>'; }).join('') + '</dl>' : '') +
+        '<ul class="tasks">' + j.tasks.map(function (t) {
+          return '<li><label><input type="checkbox" data-key="' + esc(t.key) + '"' + (t.done ? ' checked' : '') + '><span>' + esc(t.text) +
+            '</span>' + (t.source !== 'notes' ? '<span class="src">' + esc(t.source) + '</span>' : '') + '</label></li>';
+        }).join('') + '</ul>' +
+        (total ? '' : '<p class="meta" style="padding-bottom:8px">No notes on this event.</p>') +
+        '</article>';
+    });
+    $('main').innerHTML = html;
+  }
+
+  /* ---------- events ---------- */
+  $('tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('.tab'); if (!b) return;
+    tab = b.getAttribute('data-tab'); store.set('tab', tab); render();
+  });
+  $('main').addEventListener('change', function (e) {
+    var box = e.target; if (box.type !== 'checkbox') return;
+    var card = box.closest('.card'), id = card.getAttribute('data-id'), key = box.getAttribute('data-key');
+    var job = data.jobs.filter(function (j) { return j.id === id; })[0];
+    var task = job.tasks.filter(function (t) { return t.key === key; })[0];
+    task.done = box.checked;
+    render();
+    call('setTask', [data.date, id, job.title, key, task.text, task.done], function () {}, function (err) {
+      task.done = !task.done; render(); toast('Not saved: ' + (err.message || err));
+    });
+  });
+  $('prev').onclick = function () { load(shift(current, -1)); };
+  $('next').onclick = function () { load(shift(current, 1)); };
+  $('today').onclick = function () { load(ymd(new Date())); };
+  $('refresh').onclick = function () { load(current); };
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && data) load(current); });
+  setInterval(function () { if (!document.hidden) load(current); }, 5 * 60 * 1000);
+
+  /* ---------- demo data (only used outside Google) ---------- */
+  var Demo = (function () {
+    var techs = [{ tag: 'AR', name: 'Alex Rivera' }, { tag: 'JL', name: 'Jordan Lee' }, { tag: 'SP', name: 'Sam Patel' }];
+    var lib = {
+      prewire: ['Walk the plan with the GC or homeowner', 'Label both ends of every cable', 'Photograph every wall before drywall'],
+      install: ['Update firmware on new gear', 'Walk the client through the system', 'Clean up and take final photos'],
+      service: ['Note the issue and the fix in the event', 'Confirm the client is happy before leaving']
+    };
+    var pool = [
+      { t: 'Hartwell Residence', k: 'prewire', loc: '412 Magnolia Way', n: ['Theater: 7.2.4 speaker wire + 2 HDMI to rack', 'Cat6 to every TV location (6)', 'Smurf tube to the patio TV'], i: [['Gate code', '4471']] },
+      { t: 'Okafor Media Room', k: 'install', loc: '88 Brookline Ct', n: ['Mount 85" TV and soundbar', 'Program remote: TV, cable, Apple TV', 'Set up streaming accounts with client'], i: [['Contact', 'Ada, 555-0142']] },
+      { t: 'Delgado Service', k: 'service', loc: '1930 Ridge Rd', n: ['Kitchen keypad not responding', 'Replace batteries in 3 remotes'], i: [['Alarm', 'Client will disarm']] },
+      { t: 'Lakeview Office Suite', k: 'install', loc: '500 Lakeview Pkwy, Ste 210', n: ['Rack and dress network switch', 'Conference room display + camera', 'Test wireless presentation'], i: [['Parking', 'Visitor lot B'], ['Contact', 'Front desk']] },
+      { t: 'Nguyen Lake House', k: 'prewire', loc: '7 Shoreline Dr', n: ['Outdoor speakers on the dock (4)', 'Cameras at both driveways'], i: [] },
+      { t: 'Brennan Service', k: 'service', loc: '64 Oak Hollow', n: ['Wi-Fi drops in the primary bedroom', 'Check AP in the attic'], i: [['Wifi', 'Brennan-Home']] },
+      { t: 'Castillo Whole-Home Audio', k: 'install', loc: '1210 Peachtree Ln', n: ['Trim out 8 ceiling speakers', 'Program zone names in the app'], i: [['Door code', '2580']] }
+    ];
+    function seed(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return function () { h = (h * 1103515245 + 12345) | 0; return ((h >>> 0) % 1000) / 1000; }; }
+    var checks = {};
+    function getPunchlist(dateStr) {
+      var p = dateStr.split('-'), d = new Date(+p[0], p[1] - 1, +p[2]), dow = d.getDay(), r = seed(dateStr);
+      var label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      var base = { company: 'Example AV Co.', date: dateStr, dateLabel: label, techs: techs, me: '', jobs: [], crew: [] };
+      if (dow === 0 || dow === 6) { base.crew.push({ text: 'Weekend', tech: '' }); return base; }
+      var start = Math.floor(r() * pool.length), slots = [[8, 11], [12, 15], [9, 12], [13, 16], [8, 12]];
+      var who = ['AR', 'JL', 'SP', 'AR', 'JL'];
+      var off = techs[Math.floor(r() * 3)].tag;
+      base.crew.push({ text: (off === 'SP' ? 'Sam' : off === 'AR' ? 'Alex' : 'Jordan') + ' out at 3', tech: off });
+      for (var i = 0; i < 5; i++) {
+        var j = pool[(start + i) % pool.length], id = dateStr + '-' + i;
+        var tasks = j.n.map(function (x) { return { text: x, source: 'notes' }; }).concat(lib[j.k].map(function (x) { return { text: x, source: j.k }; }));
+        tasks.forEach(function (t, n) { t.key = 'k' + n; t.done = !!checks[id + '|' + t.key]; });
+        var s = slots[i];
+        base.jobs.push({ id: id, title: j.t, tech: who[i], time: fmt(s[0]) + ' to ' + fmt(s[1]), start: s[0], location: j.loc,
+          info: j.i.map(function (x) { return { label: x[0], value: x[1] }; }), tasks: tasks });
+      }
+      base.jobs.sort(function (a, b) { return a.start - b.start; });
+      return base;
+    }
+    function fmt(h) { return (h > 12 ? h - 12 : h) + ':00 ' + (h >= 12 ? 'PM' : 'AM'); }
+    function setTask(dateStr, id, title, key, text, done) { checks[id + '|' + key] = done; return true; }
+    return { getPunchlist: getPunchlist, setTask: setTask };
+  })();
+
+  load(current);
+})();
+</script>
+</body>
+</html>
