@@ -135,7 +135,8 @@
 
     var jobs = d.jobs.filter(function (j) { return tab === 'ALL' || j.tech === tab; });
     var techName = {}; d.techs.forEach(function (t) { techName[t.tag] = t.name.split(' ')[0]; });
-    var html = LIVE ? '' : '<div class="demo">Demo with sample jobs. Check boxes to try it; nothing is saved.</div>';
+    var html = !LIVE ? '<div class="demo">Demo with sample jobs. Check boxes to try it; nothing is saved.</div>' :
+      d.demo ? '<div class="demo">Sample jobs from the Sample Jobs tab. To use your calendar: Punchlist &gt; Remove demo in the sheet.</div>' : '';
 
     var crew = d.crew.filter(function (c) { return tab === 'ALL' || !c.tech || c.tech === tab; });
     if (crew.length) html += '<div class="crew">' + crew.map(function (c) { return '<span class="chip">' + esc(c.text) + '</span>'; }).join('') + '</div>';
