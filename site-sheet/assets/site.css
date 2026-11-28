@@ -119,6 +119,12 @@ figcaption { margin-top: 12px; font-size: 14px; color: var(--ink-3); }
 .tile figcaption b { color: var(--ink); }
 
 /* privacy band */
+.insure { margin-top: 104px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.insure-text { display: flex; flex-direction: column; gap: 14px; }
+.insure-text p { color: var(--ink-2); }
+.insure-list { padding: 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); gap: 16px; }
+.insure-list b { color: var(--ink); }
+@media (max-width: 860px) { .insure { grid-template-columns: 1fr; gap: 24px; margin-top: 72px; } .insure-list { padding: 20px; } }
 .privacy { margin-top: 104px; background: var(--band); color: var(--band-ink); }
 .privacy-inner { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 24px; padding-block: 56px; align-items: start; }
 .privacy svg { width: 48px; height: 48px; fill: none; stroke: #5aa6f0; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
